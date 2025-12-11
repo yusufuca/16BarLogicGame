@@ -3,65 +3,60 @@ using UnityEngine;
 public class TPSCamera : MonoBehaviour
 {
     [Header("References")]
-    // The empty GameObject attached to the Player's head
     public Transform target;
 
     [Header("Orbit Settings")]
-    public float distance = 5.0f; // Radius of the sphere
-    public float mouseSensitivity = 4.0f;
+    public float distance = 5.0f;
+    public float minDistance = 2.0f; // Closest zoom
+    public float maxDistance = 10.0f; // Furthest zoom
+    public float zoomSensitivity = 2.0f;
 
-    // Limits vertical look to prevent flipping (e.g., -40 floor, 85 sky)
+    [Header("Input Settings")]
+    public float mouseSensitivity = 4.0f;
     public Vector2 pitchLimits = new Vector2(-40, 85);
 
     [Header("Smoothing")]
-    // Time in seconds for the camera to reach the target rotation
     public float rotationSmoothTime = 0.12f;
-    private Vector3 _rotationSmoothVelocity; // Reference var for SmoothDamp
-
-    // Internal Euler angles (Degrees)
+    private Vector3 _rotationSmoothVelocity;
     private Vector3 _currentRotation;
-    private float _yaw;   // Horizontal (Y axis)
-    private float _pitch; // Vertical (X axis)
+    private float _yaw;
+    private float _pitch;
 
     void Start()
     {
-        // Initialization: Remove cursor from screen
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // Initialize rotation to match current camera to avoid snapping
+        _currentRotation = transform.eulerAngles;
+        _yaw = _currentRotation.y;
+        _pitch = _currentRotation.x;
     }
 
-    // LATEUPDATE: Runs after Update(). 
-    // Critical for cameras to prevent jitter if the Player moves in Update().
     void LateUpdate()
     {
         if (target == null) return;
 
-        // STEP 1: Input Accumulation
-        // Read raw mouse delta.
+        // 1. Rotation Input
         _yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
-        _pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity; // Subtract to invert Y (Standard)
-
-        // STEP 2: Clamping
-        // Restrict the vertical angle so we can't look between our own legs.
+        _pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
         _pitch = Mathf.Clamp(_pitch, pitchLimits.x, pitchLimits.y);
 
-        // STEP 3: Smoothing (Mathf.SmoothDamp)
-        // This interpolates the value to prevent jerky camera movement.
+        // 2. Zoom Input (NEW LOGIC)
+        // ScrollWheel returns approx +/- 0.1. We subtract to invert (Scroll Up = Zoom In/Decrease Distance)
+        float scroll = Input.GetAxis("Mouse ScrollWheel") * zoomSensitivity;
+        distance -= scroll;
+        distance = Mathf.Clamp(distance, minDistance, maxDistance);
+
+        // 3. Smoothing
         Vector3 targetRotation = new Vector3(_pitch, _yaw);
         _currentRotation = Vector3.SmoothDamp(_currentRotation, targetRotation, ref _rotationSmoothVelocity, rotationSmoothTime);
 
-        // STEP 4: Quaternion Calculation
-        // Convert the smoothed Vector3 (Euler) into a Rotation (Quaternion).
+        // 4. Transform Calculation
         Quaternion finalRotation = Quaternion.Euler(_currentRotation.x, _currentRotation.y, 0);
-
-        // STEP 5: Position Calculation (The Orbit Logic)
-        // Logic: Start at Target -> Rotate to Angle -> Move Backwards by Distance
-        // Vector3.forward is (0,0,1). Multiplying by negative distance gives (0,0,-5).
-        // Multiplying by Rotation applies the angle to that offset.
         Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
         Vector3 finalPosition = target.position + (finalRotation * negDistance);
 
-        // STEP 6: Apply Transforms
         transform.rotation = finalRotation;
         transform.position = finalPosition;
     }
