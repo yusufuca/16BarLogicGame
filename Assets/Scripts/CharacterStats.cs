@@ -9,6 +9,9 @@ public class CharacterStats : MonoBehaviour
     [Header("Death Settings")]
     public bool isDead = false;
 
+    [Header("UI References")]
+    public HealthBar healthBar; // Drag the Canvas/Slider object here (Only for Player)
+
     // Animator reference to play "Death" animation
     private Animator _animator;
 
@@ -17,6 +20,12 @@ public class CharacterStats : MonoBehaviour
         currentHealth = maxHealth;
         _animator = GetComponent<Animator>();
         // Or GetComponentInChildren<Animator>() if using the skeleton architecture
+
+        // Initialize UI if assigned
+        if (healthBar != null)
+        {
+            healthBar.SetMaxHealth(maxHealth);
+        }
     }
 
     public void TakeDamage(int damage)
@@ -25,6 +34,12 @@ public class CharacterStats : MonoBehaviour
 
         currentHealth -= damage;
         Debug.Log(transform.name + " took " + damage + " damage. HP: " + currentHealth);
+
+        // Update UI
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(currentHealth);
+        }
 
         // Optional: Play Hit Reaction animation here
 
