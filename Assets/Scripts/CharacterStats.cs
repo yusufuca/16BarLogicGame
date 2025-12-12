@@ -54,26 +54,32 @@ public class CharacterStats : MonoBehaviour
         isDead = true;
         Debug.Log(transform.name + " Died.");
 
-        // Trigger Death Animation
+        // FIX A: Ensure parameter exists before calling (or just add it in Animator)
         if (_animator != null)
         {
-            // You need to add a "Die" trigger to your Animator Controller later
             _animator.SetTrigger("Die");
         }
 
-        // Disable Logic (Movement/AI)
-        // We disable specific components so the body stays but stops acting
-        var ai = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        if (ai != null) ai.enabled = false;
+        // FIX B: Disable the BRAIN (Script) first!
+        // This stops the Update() loop from trying to move the agent.
+        var enemyAI = GetComponent<EnemyAI>();
+        if (enemyAI != null) enemyAI.enabled = false;
+
+        // Disable the Player Input if this is the player
+        var playerInput = GetComponent<TPSMovement>();
+        if (playerInput != null) playerInput.enabled = false;
+
+        // Disable the Body (Physics/NavMesh)
+        var agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        if (agent != null) agent.enabled = false;
+
+        var collider = GetComponent<Collider>();
+        if (collider != null) collider.enabled = false;
 
         var controller = GetComponent<CharacterController>();
         if (controller != null) controller.enabled = false;
 
-        var input = GetComponent<TPSMovement>();
-        if (input != null) input.enabled = false;
-
-        // Remove the collider so we can walk over the corpse
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = false;
+        // Finally, disable this Stats script
+        this.enabled = false;
     }
 }
