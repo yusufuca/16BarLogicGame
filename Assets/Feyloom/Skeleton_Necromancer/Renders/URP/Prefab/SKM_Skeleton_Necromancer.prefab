@@ -949,7 +949,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
-  isDead: 0
+  itemToDrop: {fileID: 2195480022752132373, guid: d8a9a2cfe9aedd84cb5d71aab19d2425, type: 3}
   healthBar: {fileID: 6263542606421585955}
 --- !u!114 &6263542606421585955
 MonoBehaviour:

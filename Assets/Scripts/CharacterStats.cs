@@ -2,85 +2,74 @@ using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
-    [Header("Health Settings")]
+    [Header("Stats")]
     public int maxHealth = 100;
     public int currentHealth;
 
-    [Header("Death Settings")]
-    public bool isDead = false;
+    [Header("Loot Settings")]
+    public GameObject itemToDrop; // Drag the HP_Orb Prefab here (Only for Enemies)
 
-    [Header("UI References")]
-    public HealthBar healthBar; // Drag the Canvas/Slider object here (Only for Player)
+    [Header("References")]
+    public HealthBar healthBar;
 
-    // Animator reference to play "Death" animation
     private Animator _animator;
+    private bool _isDead;
 
     void Start()
     {
         currentHealth = maxHealth;
         _animator = GetComponent<Animator>();
-        // Or GetComponentInChildren<Animator>() if using the skeleton architecture
-
-        // Initialize UI if assigned
-        if (healthBar != null)
-        {
-            healthBar.SetMaxHealth(maxHealth);
-        }
+        if (healthBar != null) healthBar.SetMaxHealth(maxHealth);
     }
 
     public void TakeDamage(int damage)
     {
-        if (isDead) return;
+        if (_isDead) return;
 
         currentHealth -= damage;
 
-        // NEW: Play Hit Reaction
-        if (_animator != null)
-        {
-            _animator.SetTrigger("Hit");
-        }
-
-        // NEW: Reset the path slightly to stop them sliding while flinching
+        // Hit Reaction Logic
+        if (_animator != null) _animator.SetTrigger("Hit");
         var agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         if (agent != null && agent.enabled) agent.SetDestination(transform.position);
 
-        Debug.Log(transform.name + " took " + damage + " damage.");
+        if (healthBar != null) healthBar.SetHealth(currentHealth);
+
+        if (currentHealth <= 0) Die();
+    }
+
+    // NEW: Healing Method
+    public void Heal(int amount)
+    {
+        if (_isDead) return;
+
+        currentHealth += amount;
+
+        // Clamp: Ensure we don't go over Max Health
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
 
         if (healthBar != null) healthBar.SetHealth(currentHealth);
-        if (currentHealth <= 0) Die();
+        Debug.Log(transform.name + " Healed " + amount);
     }
 
     void Die()
     {
-        isDead = true;
-        Debug.Log(transform.name + " Died.");
+        _isDead = true;
+        if (_animator != null) _animator.SetTrigger("Die");
 
-        // FIX A: Ensure parameter exists before calling (or just add it in Animator)
-        if (_animator != null)
+        // NEW: Drop Logic
+        if (itemToDrop != null)
         {
-            _animator.SetTrigger("Die");
+            // Spawn the orb slightly above the ground (Y + 1.0)
+            Instantiate(itemToDrop, transform.position + Vector3.up, Quaternion.identity);
         }
 
-        // FIX B: Disable the BRAIN (Script) first!
-        // This stops the Update() loop from trying to move the agent.
-        var enemyAI = GetComponent<EnemyAI>();
-        if (enemyAI != null) enemyAI.enabled = false;
+        // Disable Components
+        if (GetComponent<UnityEngine.AI.NavMeshAgent>()) GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
+        if (GetComponent<CharacterController>()) GetComponent<CharacterController>().enabled = false;
+        if (GetComponent<Collider>()) GetComponent<Collider>().enabled = false;
+        if (GetComponent<EnemyAI>()) GetComponent<EnemyAI>().enabled = false;
 
-        // Disable the Player Input if this is the player
-        var playerInput = GetComponent<TPSMovement>();
-        if (playerInput != null) playerInput.enabled = false;
-
-        // Disable the Body (Physics/NavMesh)
-        var agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        if (agent != null) agent.enabled = false;
-
-        var collider = GetComponent<Collider>();
-        if (collider != null) collider.enabled = false;
-
-        var controller = GetComponent<CharacterController>();
-        if (controller != null) controller.enabled = false;
-
-        // Finally, disable this Stats script
         this.enabled = false;
     }
 }
