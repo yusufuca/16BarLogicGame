@@ -33,20 +33,21 @@ public class CharacterStats : MonoBehaviour
         if (isDead) return;
 
         currentHealth -= damage;
-        Debug.Log(transform.name + " took " + damage + " damage. HP: " + currentHealth);
 
-        // Update UI
-        if (healthBar != null)
+        // NEW: Play Hit Reaction
+        if (_animator != null)
         {
-            healthBar.SetHealth(currentHealth);
+            _animator.SetTrigger("Hit");
         }
 
-        // Optional: Play Hit Reaction animation here
+        // NEW: Reset the path slightly to stop them sliding while flinching
+        var agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        if (agent != null && agent.enabled) agent.SetDestination(transform.position);
 
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        Debug.Log(transform.name + " took " + damage + " damage.");
+
+        if (healthBar != null) healthBar.SetHealth(currentHealth);
+        if (currentHealth <= 0) Die();
     }
 
     void Die()

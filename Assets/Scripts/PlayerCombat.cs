@@ -4,12 +4,13 @@ public class PlayerCombat : MonoBehaviour
 {
     [Header("Combat Stats")]
     public int damage = 20;
-    public float attackRange = 2.0f;
-    public float attackRate = 1.0f; // Attacks per second
+    public float attackRange = 1.5f;
+    public float attackRate = 2.0f;
+    public float impactDelay = 0.4f;
 
     [Header("References")]
-    public Transform attackPoint; // Where the hit happens (create this!)
-    public LayerMask enemyLayers; // Who can we hit?
+    public Transform attackPoint;
+    public LayerMask enemyLayers;
 
     private Animator _animator;
     private float _nextAttackTime = 0f;
@@ -21,10 +22,8 @@ public class PlayerCombat : MonoBehaviour
 
     void Update()
     {
-        // Rate Limiter
         if (Time.time >= _nextAttackTime)
         {
-            // Input: Fire1 is usually Left Click or Ctrl
             if (Input.GetButtonDown("Fire1"))
             {
                 Attack();
@@ -35,29 +34,34 @@ public class PlayerCombat : MonoBehaviour
 
     void Attack()
     {
-        // 1. Play Animation
-        _animator.SetTrigger("Attack");
+        // 1. CHANGE: Removed CancelInvoke("DealDamage");
+        // Now, previous attacks will continue to count down and deal damage
+        // even if the animation is visually interrupted.
 
-        // 2. Detect Enemies (SphereCast)
-        // We create a sphere at 'attackPoint' with size 'attackRange'
+        // 2. ANIMATION: Force Restart
+        // We still restart the animation to give the "responsive" feel.
+        _animator.Play("Attack", 0, 0f);
+
+        // 3. LOGIC: Schedule the new damage hit
+        // These Invokes will now "stack up" in the background.
+        Invoke("DealDamage", impactDelay);
+    }
+
+    void DealDamage()
+    {
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
-
-        // 3. Deal Damage
         foreach (Collider enemy in hitEnemies)
         {
-            // Try to find HP component
-            CharacterStats enemyStats = enemy.GetComponent<CharacterStats>();
-            if (enemyStats != null)
+            CharacterStats stats = enemy.GetComponent<CharacterStats>();
+            if (stats != null)
             {
-                enemyStats.TakeDamage(damage);
+                stats.TakeDamage(damage);
             }
         }
     }
 
-    // DEBUG: Draw the hit sphere in Editor
     void OnDrawGizmosSelected()
     {
-        if (attackPoint == null) return;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        if (attackPoint != null) Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }
