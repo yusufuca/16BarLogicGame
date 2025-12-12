@@ -951,6 +951,7 @@ MonoBehaviour:
   currentHealth: 0
   itemToDrop: {fileID: 2195480022752132373, guid: d8a9a2cfe9aedd84cb5d71aab19d2425, type: 3}
   healthBar: {fileID: 6263542606421585955}
+  damageTextPrefab: {fileID: 4168428217786865534, guid: bcddbf6acc8e8b44bb2f87e82b07b65f, type: 3}
 --- !u!114 &6263542606421585955
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ public class CharacterStats : MonoBehaviour
 
     [Header("References")]
     public HealthBar healthBar;
+    public GameObject damageTextPrefab; // DRAG YOUR POPUP PREFAB HERE
 
     private Animator _animator;
     private bool _isDead;
@@ -27,6 +28,15 @@ public class CharacterStats : MonoBehaviour
         if (_isDead) return;
 
         currentHealth -= damage;
+
+        if (damageTextPrefab != null)
+        {
+            // Spawn slightly above the head (Y + 2.0)
+            GameObject popup = Instantiate(damageTextPrefab, transform.position + Vector3.up * 2.0f, Quaternion.identity);
+
+            // Set the number
+            popup.GetComponent<DamageText>().SetText(damage);
+        }
 
         // Hit Reaction Logic
         if (_animator != null) _animator.SetTrigger("Hit");
