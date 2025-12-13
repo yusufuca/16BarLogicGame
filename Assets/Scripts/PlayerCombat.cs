@@ -100,6 +100,19 @@ public class PlayerCombat : MonoBehaviour
         {
             inventoryUI.UpdateUI(inventory, activeSlotIndex);
         }
+
+        if (_myStats != null)
+        {
+            if (inventory[activeSlotIndex].type == WeaponType.LifeSteal)
+            {
+                // GDD: Regen Sword enables passive regen logic
+                _myStats.EnableRegen(true);
+            }
+            else
+            {
+                _myStats.EnableRegen(false);
+            }
+        }
     }
 
     // REVISED: Logic to find empty slot
@@ -149,12 +162,17 @@ public class PlayerCombat : MonoBehaviour
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
         foreach (Collider enemy in hitEnemies)
         {
-            CharacterStats stats = enemy.GetComponent<CharacterStats>();
-            if (stats != null)
+            CharacterStats enemyStats = enemy.GetComponent<CharacterStats>();
+            if (enemyStats != null)
             {
                 WeaponData currentWeapon = inventory[activeSlotIndex];
-                stats.TakeDamage(currentWeapon.damage);
-                ApplyWeaponEffect(currentWeapon.type, stats, enemy.transform.position);
+
+                // NEW: Calculate Final Damage with Level Multiplier
+                float multiplier = (_myStats != null) ? _myStats.damageMultiplier : 1.0f;
+                int finalDamage = Mathf.RoundToInt(currentWeapon.damage * multiplier);
+
+                enemyStats.TakeDamage(finalDamage);
+                ApplyWeaponEffect(currentWeapon.type, enemyStats, enemy.transform.position);
             }
         }
     }
