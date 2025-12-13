@@ -1,41 +1,73 @@
 using UnityEngine;
 
-public enum WeaponType { Default, Fire, LifeSteal }
+// (Enum and Class remain the same)
+public enum WeaponType { None, Default, Fire, LifeSteal }
+
+[System.Serializable]
+public class WeaponData
+{
+    public string name;
+    public WeaponType type;
+    public int damage;
+    public Color color;
+    public bool hasWeapon;
+}
 
 public class PlayerCombat : MonoBehaviour
 {
-    [Header("Weapon Status")]
-    public WeaponType currentWeapon = WeaponType.Default;
-    public int damage = 30; // Default Grey Damage
+    [Header("Inventory")]
+    public WeaponData[] inventory;
+    public int activeSlotIndex = 0;
 
-    [Header("Visual References")]
-    public MeshRenderer handSwordRenderer; // Drag your character's SWORD mesh here
-    public GameObject fireParticlePrefab; // Drag a particle prefab here (optional)
+    [Header("References")]
+    public InventoryUI inventoryUI; // DRAG THE UI SCRIPT HERE
+    public MeshRenderer handSwordRenderer;
 
-    [Header("Settings")]
+    // ... (Other variables: attackRange, etc. keep them same) ...
     public float attackRange = 1.5f;
     public float attackRate = 2.0f;
     public float impactDelay = 0.4f;
-
-    [Header("References")]
     public Transform attackPoint;
     public LayerMask enemyLayers;
+    public GameObject fireParticlePrefab;
 
     private Animator _animator;
-    private CharacterStats _myStats; // To heal myself
+    private CharacterStats _myStats;
     private float _nextAttackTime = 0f;
 
     void Start()
     {
         _animator = GetComponent<Animator>();
         _myStats = GetComponent<CharacterStats>();
+
+        // Init Inventory
+        if (inventory == null || inventory.Length != 3)
+        {
+            inventory = new WeaponData[3];
+            for (int i = 0; i < 3; i++) inventory[i] = new WeaponData();
+        }
+
+        // Setup Default Weapon in Slot 1
+        inventory[0].name = "Grey Slayer";
+        inventory[0].type = WeaponType.Default;
+        inventory[0].damage = 30;
+        inventory[0].color = Color.white;
+        inventory[0].hasWeapon = true;
+
+        UpdateWeaponVisuals();
     }
 
     void Update()
     {
+        // Switch Inputs
+        if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchSlot(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchSlot(1);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchSlot(2);
+
+        // Attack Input
         if (Time.time >= _nextAttackTime)
         {
-            if (Input.GetButtonDown("Fire1"))
+            if (Input.GetButtonDown("Fire1") && inventory[activeSlotIndex].hasWeapon)
             {
                 Attack();
                 _nextAttackTime = Time.time + 1f / attackRate;
@@ -43,12 +75,72 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    void SwitchSlot(int index)
+    {
+        activeSlotIndex = index;
+        UpdateWeaponVisuals();
+    }
+
+    void UpdateWeaponVisuals()
+    {
+        // 1. Update 3D Model
+        if (inventory[activeSlotIndex].hasWeapon)
+        {
+            handSwordRenderer.enabled = true;
+            handSwordRenderer.material.color = inventory[activeSlotIndex].color;
+            handSwordRenderer.material.SetColor("_EmissionColor", inventory[activeSlotIndex].color);
+        }
+        else
+        {
+            handSwordRenderer.enabled = false;
+        }
+
+        // 2. Update 2D UI
+        if (inventoryUI != null)
+        {
+            inventoryUI.UpdateUI(inventory, activeSlotIndex);
+        }
+    }
+
+    // REVISED: Logic to find empty slot
+    public void EquipWeapon(WeaponType newType, int newDamage, Color newColor)
+    {
+        int slotToFill = -1;
+
+        // A. Look for first Empty Slot
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (!inventory[i].hasWeapon)
+            {
+                slotToFill = i;
+                break;
+            }
+        }
+
+        // B. If full, overwrite the Active Slot (Gameplay choice)
+        if (slotToFill == -1)
+        {
+            slotToFill = activeSlotIndex;
+        }
+
+        // C. Fill Data
+        inventory[slotToFill].type = newType;
+        inventory[slotToFill].damage = newDamage;
+        inventory[slotToFill].color = newColor;
+        inventory[slotToFill].hasWeapon = true;
+        inventory[slotToFill].name = newType.ToString();
+
+        // D. Refresh visuals (Only if we modified the active slot, OR strictly update UI)
+        UpdateWeaponVisuals();
+
+        Debug.Log("Added " + newType + " to Slot " + (slotToFill + 1));
+    }
+
+    // ... (Keep existing Attack(), DealDamage(), ApplyWeaponEffect() logic) ...
     void Attack()
     {
-        // Restart Animation
+        // CancelInvoke removed as per previous request
         _animator.Play("Attack", 0, 0f);
-
-        // Schedule Damage
         Invoke("DealDamage", impactDelay);
     }
 
@@ -57,55 +149,21 @@ public class PlayerCombat : MonoBehaviour
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
         foreach (Collider enemy in hitEnemies)
         {
-            CharacterStats enemyStats = enemy.GetComponent<CharacterStats>();
-            if (enemyStats != null)
+            CharacterStats stats = enemy.GetComponent<CharacterStats>();
+            if (stats != null)
             {
-                // 1. Apply Base Damage
-                enemyStats.TakeDamage(damage);
-
-                // 2. Apply Special Effects
-                ApplyWeaponEffect(enemyStats, enemy.transform.position);
+                WeaponData currentWeapon = inventory[activeSlotIndex];
+                stats.TakeDamage(currentWeapon.damage);
+                ApplyWeaponEffect(currentWeapon.type, stats, enemy.transform.position);
             }
         }
     }
 
-    void ApplyWeaponEffect(CharacterStats enemy, Vector3 hitPos)
+    void ApplyWeaponEffect(WeaponType type, CharacterStats enemy, Vector3 hitPos)
     {
-        switch (currentWeapon)
-        {
-            case WeaponType.LifeSteal:
-                // Green: Heal player for small amount (e.g. 5 HP)
-                if (_myStats != null) _myStats.Heal(5);
-                break;
-
-            case WeaponType.Fire:
-                // Red: Spawn visual fire (and maybe extra logic later)
-                if (fireParticlePrefab != null)
-                {
-                    Instantiate(fireParticlePrefab, hitPos + Vector3.up, Quaternion.identity);
-                }
-                Debug.Log("Burned Enemy!");
-                break;
-
-            case WeaponType.Default:
-                // Grey: Just raw power (Damage is already higher)
-                break;
-        }
-    }
-
-    // NEW: Method to switch weapons from the Pickup Script
-    public void EquipWeapon(WeaponType type, int newDamage, Color newColor)
-    {
-        currentWeapon = type;
-        damage = newDamage;
-
-        // Change Visual Color
-        if (handSwordRenderer != null)
-        {
-            handSwordRenderer.material.color = newColor;
-            // Ensure Emission matches if using glowing materials
-            handSwordRenderer.material.SetColor("_EmissionColor", newColor);
-        }
+        // ... (Keep existing effect logic) ...
+        if (type == WeaponType.LifeSteal && _myStats != null) _myStats.Heal(5);
+        if (type == WeaponType.Fire && fireParticlePrefab != null) Instantiate(fireParticlePrefab, hitPos + Vector3.up, Quaternion.identity);
     }
 
     void OnDrawGizmosSelected()
