@@ -115,24 +115,31 @@ public class CharacterStats : MonoBehaviour
 
     void Die()
     {
-        if (_isDead) return; // Prevent double xp
+        if (_isDead) return;
         _isDead = true;
 
         if (_animator != null) _animator.SetTrigger("Die");
         if (itemToDrop != null) Instantiate(itemToDrop, transform.position + Vector3.up, Quaternion.identity);
 
-        // NEW: Give XP to Player
+        // XP Logic (Keep existing code)
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null && this.gameObject.tag != "Player") // Don't give XP if player dies
+        if (player != null && this.gameObject.tag != "Player")
         {
-            CharacterStats playerStats = player.GetComponent<CharacterStats>();
-            if (playerStats != null)
-            {
-                playerStats.GainXP(xpValue);
-            }
+            player.GetComponent<CharacterStats>().GainXP(xpValue);
         }
 
-        // Disable Components
+        // NEW: Game Loop Logic
+        if (this.gameObject.CompareTag("Player"))
+        {
+            // Player Died -> Game Over
+            GameManager.Instance.GameOver();
+        }
+        else if (this.gameObject.CompareTag("Boss")) // Make sure Boss object has tag "Boss"
+        {
+            // Boss Died -> Win
+            GameManager.Instance.Victory();
+        }
+
         DisableComponents();
     }
 
