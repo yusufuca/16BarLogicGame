@@ -71,11 +71,38 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639013406513553491
+  lastModified: 639013416792394203
   FileSizes:
   - Name: Desktop
-    Value: 56256
+    Value: 100704
   Exists: 1
+--- !u!114 &-5213771261302065419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/DamageImpact
+  m_EditorClassIdentifier: 
+  Path: event:/DamageImpact
+  Guid:
+    Data1: -2118763247
+    Data2: 1118146867
+    Data3: -746125650
+    Data4: 1709294288
+  Banks:
+  - {fileID: -5761889771633861848}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1075
 --- !u!114 &-4086246098601612091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,18 +148,21 @@ MonoBehaviour:
   EditorEvents:
   - {fileID: -8427106035325335726}
   - {fileID: -4086246098601612091}
+  - {fileID: -5213771261302065419}
   EditorParameters: []
   MasterBanks:
   - {fileID: -5761889771633861848}
   StringsBanks:
   - {fileID: 472317150789719487}
   cacheVersion: 131857
-  cacheTime: 639013406513565301
+  cacheTime: 639013416792429494
   SerializableEventsDict:
   - key: event:/Footsteps
     index: 0
   - key: event:/SwordSwing
     index: 1
+  - key: event:/DamageImpact
+    index: 2
 --- !u!114 &472317150789719487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,8 +178,8 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639013406513565301
+  lastModified: 639013416792429494
   FileSizes:
   - Name: Desktop
-    Value: 872
+    Value: 916
   Exists: 1

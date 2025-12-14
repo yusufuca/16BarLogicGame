@@ -25,7 +25,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private EventReference footstepSFX;
     [Header("SwordSwingSFX")]
     [SerializeField] private EventReference swordSwingSFX;
-
+    [Header("DamageImpactSFX")]
+    [SerializeField] private EventReference damageImpactSFX;
 
     public void DetectSurface(Transform entitiyTransform)
     {
@@ -69,6 +70,11 @@ public class AudioManager : MonoBehaviour
     public void PlaySwordSwingSFX()
     {
         RuntimeManager.PlayOneShot(swordSwingSFX);
+    }
+
+    public void PlayDamageImpactSFX()
+    {
+        RuntimeManager.PlayOneShot(damageImpactSFX);
     }
 
   

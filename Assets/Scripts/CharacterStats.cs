@@ -57,6 +57,7 @@ public class CharacterStats : MonoBehaviour
         if (_isDead) return;
         currentHealth -= damage;
 
+        AudioManager.AMInstance.PlayDamageImpactSFX();
         if (_animator != null) _animator.SetTrigger("Hit");
         if (healthBar != null) healthBar.SetHealth(currentHealth);
 
@@ -70,6 +71,8 @@ public class CharacterStats : MonoBehaviour
 
         _lastDamageTime = Time.time; // Reset Combat Timer
     }
+
+  
 
     public void EnableRegen(bool state)
     {
