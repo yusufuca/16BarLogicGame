@@ -132,12 +132,12 @@ public class CharacterStats : MonoBehaviour
         if (this.gameObject.CompareTag("Player"))
         {
             // Player Died -> Game Over
-            GameManager.Instance.GameOver();
+            GameManager.GMInstance.GameOver();
         }
         else if (this.gameObject.CompareTag("Boss")) // Make sure Boss object has tag "Boss"
         {
             // Boss Died -> Win
-            GameManager.Instance.Victory();
+            GameManager.GMInstance.Victory();
         }
 
         DisableComponents();

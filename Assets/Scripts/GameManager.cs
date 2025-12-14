@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager GMInstance;
 
     [Header("UI References")]
     public GameObject gameOverUI;
@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (GMInstance == null) GMInstance = this;
         else Destroy(gameObject);
     }
 

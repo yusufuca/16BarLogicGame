@@ -31,6 +31,7 @@ public class TPSMovement : MonoBehaviour
 
     void Update()
     {
+        
         // 1. Input Polling
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
@@ -66,4 +67,11 @@ public class TPSMovement : MonoBehaviour
         // Send exactly 0.0 or 1.0 based on key press
         _animator.SetFloat("Speed", currentInputMagnitude, 0.1f, Time.deltaTime);
     }
+
+    public void OnStep()
+    {
+        AudioManager.AMInstance.DetectSurface(transform.root);
+    }
+
+    
 }

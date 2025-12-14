@@ -149,4 +149,9 @@ public class EnemyAI : MonoBehaviour
             _agent.SetDestination(hit.position);
         }
     }
+
+    public void OnStep()
+    {
+        AudioManager.AMInstance.DetectSurface(transform.root);
+    }
 }

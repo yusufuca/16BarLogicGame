@@ -71,6 +71,7 @@ public class PlayerCombat : MonoBehaviour
             {
                 Attack();
                 _nextAttackTime = Time.time + 1f / attackRate;
+                AudioManager.AMInstance.PlaySwordSwingSFX();
             }
         }
     }
