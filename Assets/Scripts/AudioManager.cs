@@ -27,7 +27,11 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private EventReference swordSwingSFX;
     [Header("DamageImpactSFX")]
     [SerializeField] private EventReference damageImpactSFX;
+    [Header("GameStateLoops")]
+    [SerializeField] private EventReference gameStateLoop;
 
+    private string CurrentState = "Idle";
+    public string NewState;
     public void DetectSurface(Transform entitiyTransform)
     {
         RaycastHit hit;
@@ -77,5 +81,20 @@ public class AudioManager : MonoBehaviour
         RuntimeManager.PlayOneShot(damageImpactSFX);
     }
 
+    public void ChangingStates()
+    {
+        if(CurrentState != NewState)
+        {
+
+        }
+    }
+
+    public void StateTransition()
+    {
+        if(NewState != CurrentState)
+        {
+            RuntimeManager.StudioSystem.getParameterByName(NewState, 1f);
+        }
+    }
   
 }

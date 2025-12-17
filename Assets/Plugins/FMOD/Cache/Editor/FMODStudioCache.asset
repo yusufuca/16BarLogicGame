@@ -56,6 +56,38 @@ MonoBehaviour:
   - Grass
   - Wood
   Exists: 1
+--- !u!114 &-6391843027402846631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/GameStates/States
+  m_EditorClassIdentifier: 
+  Name: States
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 521807815
+    data2: 3418521464
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Idle
+  - Explore
+  - Combat
+  - Regen
+  - Anxiety
+  - Epic
+  - Win
+  - Die
+  Exists: 1
 --- !u!114 &-5761889771633861848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,10 +103,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639013416792394203
+  lastModified: 639015884112544835
   FileSizes:
   - Name: Desktop
-    Value: 100704
+    Value: 425344
   Exists: 1
 --- !u!114 &-5213771261302065419
 MonoBehaviour:
@@ -130,6 +162,66 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 1075
+--- !u!114 &-3338419373018963047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/GameStates
+  m_EditorClassIdentifier: 
+  Path: event:/GameStates
+  Guid:
+    Data1: 2050931066
+    Data2: 1323313809
+    Data3: -567284838
+    Data4: -820063503
+  Banks:
+  - {fileID: -5761889771633861848}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters:
+  - {fileID: -6391843027402846631}
+  - {fileID: -441366403220288579}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 27951
+--- !u!114 &-441366403220288579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/GameStates/Transitions
+  m_EditorClassIdentifier: 
+  Name: Transitions
+  StudioPath: 
+  Min: 0
+  Max: 6
+  Default: 0
+  ID:
+    data1: 2585554205
+    data2: 260833551
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - To_Loop
+  - To_Idle
+  - To_Explore
+  - To_Combat
+  - To_Regen
+  - To_Anxiety
+  - To_Epic
+  Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,13 +241,14 @@ MonoBehaviour:
   - {fileID: -8427106035325335726}
   - {fileID: -4086246098601612091}
   - {fileID: -5213771261302065419}
+  - {fileID: -3338419373018963047}
   EditorParameters: []
   MasterBanks:
   - {fileID: -5761889771633861848}
   StringsBanks:
   - {fileID: 472317150789719487}
   cacheVersion: 131857
-  cacheTime: 639013416792429494
+  cacheTime: 639015884112580348
   SerializableEventsDict:
   - key: event:/Footsteps
     index: 0
@@ -163,6 +256,8 @@ MonoBehaviour:
     index: 1
   - key: event:/DamageImpact
     index: 2
+  - key: event:/GameStates
+    index: 3
 --- !u!114 &472317150789719487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,8 +273,8 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639013416792429494
+  lastModified: 639015884112580348
   FileSizes:
   - Name: Desktop
-    Value: 916
+    Value: 1058
   Exists: 1
