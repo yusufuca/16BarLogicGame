@@ -103,10 +103,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639015884112544835
+  lastModified: 639016150867099562
   FileSizes:
   - Name: Desktop
-    Value: 425344
+    Value: 426720
   Exists: 1
 --- !u!114 &-5213771261302065419
 MonoBehaviour:
@@ -188,6 +188,7 @@ MonoBehaviour:
   Parameters:
   - {fileID: -6391843027402846631}
   - {fileID: -441366403220288579}
+  - {fileID: 7051158087177705711}
   MinDistance: 1
   MaxDistance: 20
   Length: 27951
@@ -248,7 +249,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 472317150789719487}
   cacheVersion: 131857
-  cacheTime: 639015884112580348
+  cacheTime: 639016150867149997
   SerializableEventsDict:
   - key: event:/Footsteps
     index: 0
@@ -273,8 +274,40 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639015884112580348
+  lastModified: 639016150867149997
   FileSizes:
   - Name: Desktop
-    Value: 1058
+    Value: 1098
+  Exists: 1
+--- !u!114 &7051158087177705711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/GameStates/prevState
+  m_EditorClassIdentifier: 
+  Name: prevState
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 0
+  ID:
+    data1: 1353233755
+    data2: 971463213
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Idle
+  - Explore
+  - Combat
+  - Regen
+  - Anxiety
+  - Epic
+  - Win
+  - Die
   Exists: 1

@@ -81,7 +81,9 @@ public class EnemyAI : MonoBehaviour
                 PatrolBehavior();
                 break;
             case State.Chase:
+                string requestedState = "Combat";
                 ChaseBehavior();
+                AudioManager.AMInstance.RequestState(requestedState);
                 break;
             case State.Attack:
                 AttackBehavior();
@@ -112,8 +114,10 @@ public class EnemyAI : MonoBehaviour
 
     void ChaseBehavior()
     {
+       
         _agent.speed = chaseSpeed;
         _agent.SetDestination(_player.position); // Update path to Player constantly
+       
     }
 
     void AttackBehavior()

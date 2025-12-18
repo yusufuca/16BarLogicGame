@@ -52,6 +52,7 @@ public class TPSMovement : MonoBehaviour
             // Move
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             _controller.Move(moveDir.normalized * moveSpeed * Time.deltaTime);
+            
         }
 
         // 3. Gravity
@@ -63,6 +64,11 @@ public class TPSMovement : MonoBehaviour
         // Instead of asking "How fast am I moving?", we ask "How much am I pressing the keys?"
         // This breaks the deadlock.
         float currentInputMagnitude = inputDir.magnitude;
+        
+        if(currentInputMagnitude > 0.1)
+        {
+            AudioManager.AMInstance.RequestState("Explore");
+        }
 
         // Send exactly 0.0 or 1.0 based on key press
         _animator.SetFloat("Speed", currentInputMagnitude, 0.1f, Time.deltaTime);
@@ -71,6 +77,7 @@ public class TPSMovement : MonoBehaviour
     public void OnStep()
     {
         AudioManager.AMInstance.DetectSurface(transform.root);
+
     }
 
     
