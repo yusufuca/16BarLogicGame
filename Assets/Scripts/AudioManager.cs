@@ -42,6 +42,7 @@ public class AudioManager : MonoBehaviour
 
         loopInstance = RuntimeManager.CreateInstance(gameStateLoop);
 
+
     }
 
 
@@ -71,7 +72,9 @@ public class AudioManager : MonoBehaviour
 
 
 
-    private EventInstance loopInstance;
+    public EventInstance loopInstance;
+    public float idleTimer = 0f;
+    public float idleDelay = 16f;
 
     
 
@@ -86,6 +89,7 @@ public class AudioManager : MonoBehaviour
     private int barDurationMS;
 
 
+
     
 
 
@@ -98,6 +102,8 @@ public class AudioManager : MonoBehaviour
 
         loopInstance.setParameterByNameWithLabel("States", "Idle");
         loopInstance.setParameterByNameWithLabel("prevState", "Idle");
+
+
     }
 
 
@@ -106,33 +112,17 @@ public class AudioManager : MonoBehaviour
 
     {
 
-        if (queuedState != currentState) ;
+
+
+        if (queuedState != currentState && !string.IsNullOrEmpty(queuedState))  
 
         {
-
-            int timeLinePos;
-
-            loopInstance.getTimelinePosition(out timeLinePos);
-
-
-
-            int barPos = timeLinePos % barDurationMS;
-
-
-
-            if (barPos > (barDurationMS - 5))
-
-            {
-                
-                    StartCoroutine(ApplyChangeState(queuedState));
-                
                
-                
-                currentState = queuedState;
-            }
-
+            StartCoroutine(ApplyChangeState(queuedState));
+            currentState = queuedState;
+            Debug.Log("Current State is "+currentState);
         }
-
+        
     }
 
     public void RequestState(string requestedState)
@@ -140,6 +130,7 @@ public class AudioManager : MonoBehaviour
     {
 
         queuedState = requestedState;
+        Debug.Log("Requestedstate is "+queuedState);
 
     }
 
@@ -147,40 +138,33 @@ public class AudioManager : MonoBehaviour
     public IEnumerator ApplyChangeState(string targetState)
 
     {
-       
+        int timeLinePos;
+        loopInstance.getTimelinePosition(out timeLinePos);
+        int currentPosInBar = timeLinePos % barDurationMS;
+        float timeToNextBar = (barDurationMS - currentPosInBar) / 1000f;
+        yield return new WaitForSeconds(timeToNextBar);
+
+
         loopInstance.setParameterByNameWithLabel("States", targetState);
+       
+        Debug.Log("Transition " + targetState);
         
-        Debug.Log("Current state is " + currentState);
 
         yield return new WaitForSeconds(4);
 
         loopInstance.setParameterByNameWithLabel("prevState", targetState);
+        Debug.Log("Current State set to " + targetState);
         
     }
 
     public IEnumerator SetTargetStateIdle(string targetState)
     {
         
-        //IDLE
-
-        if (currentState != "Idle")
+        if(queuedState != "Idle")
         {
-
-            if (currentState == "Combat")
-            {
-                yield return new WaitForSeconds(16);
-
-                currentState = "Idle";
-            }
-
-            if(currentState == "Explore")
-            {
-                yield return new WaitForSeconds(4);
-                currentState= "Idle";
-            }
-        }
-        
-      
+            yield return new WaitForSeconds(16);
+            queuedState = "Idle";
+        }      
     }
 
     public void DetectSurface(Transform entitiyTransform)
@@ -211,7 +195,7 @@ public class AudioManager : MonoBehaviour
 
             else if (layer == LayerMask.NameToLayer("Wood")) surfaceLabel = "Wood";
 
-            Debug.Log(surfaceLabel);
+            //Debug.Log(surfaceLabel);
 
 
 
@@ -228,9 +212,6 @@ public class AudioManager : MonoBehaviour
 
 
     }
-
-
-
 
 
     public void PlayFootstepSFX(string surfaceLable, Vector3 entitiyTransform)
@@ -257,8 +238,6 @@ public class AudioManager : MonoBehaviour
 
     }
 
-
-
     public void PlaySwordSwingSFX()
 
     {
@@ -266,7 +245,6 @@ public class AudioManager : MonoBehaviour
         RuntimeManager.PlayOneShot(swordSwingSFX);
 
     }
-
 
 
     public void PlayDamageImpactSFX()

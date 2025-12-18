@@ -81,14 +81,18 @@ public class EnemyAI : MonoBehaviour
                 PatrolBehavior();
                 break;
             case State.Chase:
-                string requestedState = "Combat";
                 ChaseBehavior();
-                AudioManager.AMInstance.RequestState(requestedState);
                 break;
             case State.Attack:
                 AttackBehavior();
                 break;
         }
+
+        if(_currentState == State.Chase || _currentState == State.Attack)
+        {
+            string requestedState = "Combat";
+            AudioManager.AMInstance.RequestState(requestedState);
+        } 
 
         // 4. Update Animator Locomotion
         // Pass the Agent's velocity to the Blend Tree (assuming you reused the Player's controller)

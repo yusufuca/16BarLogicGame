@@ -16,6 +16,8 @@ public class TPSMovement : MonoBehaviour
     private Animator _animator;
     private float _turnSmoothVelocity;
     private Vector3 _velocity;
+    private float combatToExploreTimer = 0f;
+    private float combatToExploreDelay = 16f;
 
     void Start()
     {
@@ -65,9 +67,51 @@ public class TPSMovement : MonoBehaviour
         // This breaks the deadlock.
         float currentInputMagnitude = inputDir.magnitude;
         
+        
         if(currentInputMagnitude > 0.1)
         {
-            AudioManager.AMInstance.RequestState("Explore");
+            AudioManager.AMInstance.idleTimer = 0f;
+
+            bool isInCombatState = (AudioManager.AMInstance.currentState == "Combat" || AudioManager.AMInstance.queuedState == "Combat");
+
+            bool isInExploreState = (AudioManager.AMInstance.currentState == "Explore" || AudioManager.AMInstance.queuedState == "Explore");
+
+
+            if (isInCombatState)
+            {
+                combatToExploreTimer += Time.deltaTime;
+                if (combatToExploreTimer >= combatToExploreDelay)
+                {
+                    if (isInExploreState) return;
+                    else
+                    {
+                        AudioManager.AMInstance.RequestState("Explore");
+                        combatToExploreTimer = 0f;
+                    }
+                }
+            }
+            else
+            {
+                if (isInExploreState) return;
+                else
+                {
+                    AudioManager.AMInstance.RequestState("Explore");
+                    combatToExploreTimer = 0f;
+                }
+            }
+           
+        }
+        else
+        {
+            if (AudioManager.AMInstance.currentState != "Combat" && AudioManager.AMInstance.queuedState != "Combat")
+            {
+                AudioManager.AMInstance.idleTimer += Time.deltaTime;
+               
+                if (AudioManager.AMInstance.idleTimer >= AudioManager.AMInstance.idleDelay)
+                {
+                    AudioManager.AMInstance.RequestState("Idle");
+                }
+            }
         }
 
         // Send exactly 0.0 or 1.0 based on key press
