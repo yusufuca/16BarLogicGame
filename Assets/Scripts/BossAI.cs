@@ -63,6 +63,11 @@ public class BossAI : MonoBehaviour
         {
             currentState = BossState.Chasing;
             _agent.SetDestination(_player.position);
+            AudioManager.AMInstance.setEpicState = true;
+        }
+        else if (dist == detectionRange + 20f)
+        { 
+            AudioManager.AMInstance.setAnxietyState = true;
         }
     }
 

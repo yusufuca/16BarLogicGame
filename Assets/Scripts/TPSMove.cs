@@ -66,56 +66,12 @@ public class TPSMovement : MonoBehaviour
         // Instead of asking "How fast am I moving?", we ask "How much am I pressing the keys?"
         // This breaks the deadlock.
         float currentInputMagnitude = inputDir.magnitude;
+
+        AudioManager.AMInstance.currentMagnitude = currentInputMagnitude;
         
-        
-        if(currentInputMagnitude > 0.1)
-        {
-            AudioManager.AMInstance.idleTimer = 0f;
 
-            bool isInCombatState = (AudioManager.AMInstance.currentState == "Combat" || AudioManager.AMInstance.queuedState == "Combat");
-
-            bool isInExploreState = (AudioManager.AMInstance.currentState == "Explore" || AudioManager.AMInstance.queuedState == "Explore");
-
-
-            if (isInCombatState)
-            {
-                combatToExploreTimer += Time.deltaTime;
-                if (combatToExploreTimer >= combatToExploreDelay)
-                {
-                    if (isInExploreState) return;
-                    else
-                    {
-                        AudioManager.AMInstance.RequestState("Explore");
-                        combatToExploreTimer = 0f;
-                    }
-                }
-            }
-            else
-            {
-                if (isInExploreState) return;
-                else
-                {
-                    AudioManager.AMInstance.RequestState("Explore");
-                    combatToExploreTimer = 0f;
-                }
-            }
-           
-        }
-        else
-        {
-            if (AudioManager.AMInstance.currentState != "Combat" && AudioManager.AMInstance.queuedState != "Combat")
-            {
-                AudioManager.AMInstance.idleTimer += Time.deltaTime;
-               
-                if (AudioManager.AMInstance.idleTimer >= AudioManager.AMInstance.idleDelay)
-                {
-                    AudioManager.AMInstance.RequestState("Idle");
-                }
-            }
-        }
-
-        // Send exactly 0.0 or 1.0 based on key press
-        _animator.SetFloat("Speed", currentInputMagnitude, 0.1f, Time.deltaTime);
+            // Send exactly 0.0 or 1.0 based on key press
+            _animator.SetFloat("Speed", currentInputMagnitude, 0.1f, Time.deltaTime);
     }
 
     public void OnStep()

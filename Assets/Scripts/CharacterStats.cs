@@ -26,7 +26,7 @@ public class CharacterStats : MonoBehaviour
     public GameObject damageTextPrefab;
 
     private Animator _animator;
-    private bool _isDead;
+    private bool isDead;
 
     void Update()
     {
@@ -54,7 +54,7 @@ public class CharacterStats : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (_isDead) return;
+        if (isDead) return;
         currentHealth -= damage;
 
         AudioManager.AMInstance.PlayDamageImpactSFX();
@@ -81,7 +81,7 @@ public class CharacterStats : MonoBehaviour
 
     public void Heal(int amount)
     {
-        if (_isDead) return;
+        if (isDead) return;
         currentHealth += amount;
         if (currentHealth > maxHealth) currentHealth = maxHealth;
         if (healthBar != null) healthBar.SetHealth(currentHealth);
@@ -118,8 +118,8 @@ public class CharacterStats : MonoBehaviour
 
     void Die()
     {
-        if (_isDead) return;
-        _isDead = true;
+        if (isDead) return;
+        isDead = true;
 
         if (_animator != null) _animator.SetTrigger("Die");
         if (itemToDrop != null) Instantiate(itemToDrop, transform.position + Vector3.up, Quaternion.identity);
@@ -136,11 +136,13 @@ public class CharacterStats : MonoBehaviour
         {
             // Player Died -> Game Over
             GameManager.GMInstance.GameOver();
+            AudioManager.AMInstance.isPlayerDeath = true;
         }
         else if (this.gameObject.CompareTag("Boss")) // Make sure Boss object has tag "Boss"
         {
             // Boss Died -> Win
             GameManager.GMInstance.Victory();
+            AudioManager.AMInstance.isVictory = true;
         }
 
         DisableComponents();

@@ -69,13 +69,23 @@ public class AudioManager : MonoBehaviour
     [SerializeField] public EventReference gameStateLoop;
 
 
+    ///* STATE MACHINE INT *///
 
+   
+    public bool isPlayerDeath = false;
+    public bool isVictory = false;
+    public bool setEpicState = false;
+    public bool setAnxietyState = false;
 
+    public float combatCooldown = 4f;
+    public float lastCombatTriggerTimer = -99f;
+
+    public float currentMagnitude = 0f;
 
     public EventInstance loopInstance;
     public float idleTimer = 0f;
     public float idleDelay = 16f;
-
+    public bool isTransitioning = false; 
     
 
     public string currentState = "Idle";
@@ -111,12 +121,13 @@ public class AudioManager : MonoBehaviour
     private void Update()
 
     {
-
-
+        if (isTransitioning) return;
+        queuedState = SetTheNextState();
 
         if (queuedState != currentState && !string.IsNullOrEmpty(queuedState))  
 
         {
+            
                
             StartCoroutine(ApplyChangeState(queuedState));
             currentState = queuedState;
@@ -125,27 +136,43 @@ public class AudioManager : MonoBehaviour
         
     }
 
-    public void RequestState(string requestedState)
-
+    public string SetTheNextState()
     {
 
-        queuedState = requestedState;
-        Debug.Log("Requestedstate is "+queuedState);
+        if (isPlayerDeath) return "Die";
+        if (isVictory) return "Win";
+        if (setEpicState) return "Epic";
+        bool isCombatActive = Time.time < lastCombatTriggerTimer + combatCooldown;
+        if (isCombatActive) return "Combat";
+        if (setAnxietyState) return "Anxiety";
+        if (currentMagnitude > 0.1f) return "Explore";
 
+        return "Idle";        
+    }
+
+    public void CombatTimer()
+    {
+        lastCombatTriggerTimer = Time.time;
     }
 
 
     public IEnumerator ApplyChangeState(string targetState)
 
     {
+        isTransitioning= true;
         int timeLinePos;
         loopInstance.getTimelinePosition(out timeLinePos);
         int currentPosInBar = timeLinePos % barDurationMS;
         float timeToNextBar = (barDurationMS - currentPosInBar) / 1000f;
-        yield return new WaitForSeconds(timeToNextBar);
-
+        
+        if (timeToNextBar > 0.05f)
+        {
+            yield return new WaitForSeconds(timeToNextBar - 0.05f);
+        }
 
         loopInstance.setParameterByNameWithLabel("States", targetState);
+
+
        
         Debug.Log("Transition " + targetState);
         
@@ -154,18 +181,11 @@ public class AudioManager : MonoBehaviour
 
         loopInstance.setParameterByNameWithLabel("prevState", targetState);
         Debug.Log("Current State set to " + targetState);
+        isTransitioning = false;
         
     }
 
-    public IEnumerator SetTargetStateIdle(string targetState)
-    {
-        
-        if(queuedState != "Idle")
-        {
-            yield return new WaitForSeconds(16);
-            queuedState = "Idle";
-        }      
-    }
+   
 
     public void DetectSurface(Transform entitiyTransform)
 
