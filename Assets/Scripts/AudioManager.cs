@@ -1,4 +1,4 @@
-using FMOD.Studio;
+﻿using FMOD.Studio;
 using FMODUnity;
 using System.Collections;
 using UnityEngine;
@@ -71,7 +71,7 @@ public class AudioManager : MonoBehaviour
 
     ///* STATE MACHINE INT *///
 
-   
+
     public bool isPlayerDeath = false;
     public bool isVictory = false;
     public bool setEpicState = false;
@@ -85,8 +85,8 @@ public class AudioManager : MonoBehaviour
     public EventInstance loopInstance;
     public float idleTimer = 0f;
     public float idleDelay = 16f;
-    public bool isTransitioning = false; 
-    
+    public bool isTransitioning = false;
+
 
     public string currentState = "Idle";
 
@@ -100,7 +100,7 @@ public class AudioManager : MonoBehaviour
 
 
 
-    
+
 
 
 
@@ -124,16 +124,16 @@ public class AudioManager : MonoBehaviour
         if (isTransitioning) return;
         queuedState = SetTheNextState();
 
-        if (queuedState != currentState && !string.IsNullOrEmpty(queuedState))  
+        if (queuedState != currentState && !string.IsNullOrEmpty(queuedState))
 
         {
-            
-               
+
+
             StartCoroutine(ApplyChangeState(queuedState));
             currentState = queuedState;
-            Debug.Log("Current State is "+currentState);
+            Debug.Log("Current State is " + currentState);
         }
-        
+
     }
 
     public string SetTheNextState()
@@ -147,7 +147,7 @@ public class AudioManager : MonoBehaviour
         if (setAnxietyState) return "Anxiety";
         if (currentMagnitude > 0.1f) return "Explore";
 
-        return "Idle";        
+        return "Idle";
     }
 
     public void CombatTimer()
@@ -159,12 +159,12 @@ public class AudioManager : MonoBehaviour
     public IEnumerator ApplyChangeState(string targetState)
 
     {
-        isTransitioning= true;
+        isTransitioning = true;
         int timeLinePos;
         loopInstance.getTimelinePosition(out timeLinePos);
         int currentPosInBar = timeLinePos % barDurationMS;
         float timeToNextBar = (barDurationMS - currentPosInBar) / 1000f;
-        
+
         if (timeToNextBar > 0.05f)
         {
             yield return new WaitForSeconds(timeToNextBar - 0.05f);
@@ -173,19 +173,19 @@ public class AudioManager : MonoBehaviour
         loopInstance.setParameterByNameWithLabel("States", targetState);
 
 
-       
+
         Debug.Log("Transition " + targetState);
-        
+
 
         yield return new WaitForSeconds(4);
 
         loopInstance.setParameterByNameWithLabel("prevState", targetState);
         Debug.Log("Current State set to " + targetState);
         isTransitioning = false;
-        
+
     }
 
-   
+
 
     public void DetectSurface(Transform entitiyTransform)
 
