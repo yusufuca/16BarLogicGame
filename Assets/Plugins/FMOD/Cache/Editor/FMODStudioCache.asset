@@ -103,10 +103,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639044540130714150
+  lastModified: 639046434984858273
   FileSizes:
   - Name: Desktop
-    Value: 426464
+    Value: 868800
   Exists: 1
 --- !u!114 &-5213771261302065419
 MonoBehaviour:
@@ -182,7 +182,7 @@ MonoBehaviour:
     Data4: -820063503
   Banks:
   - {fileID: -5761889771633861848}
-  IsStream: 0
+  IsStream: 1
   Is3D: 0
   IsOneShot: 0
   Parameters:
@@ -190,7 +190,7 @@ MonoBehaviour:
   - {fileID: 7051158087177705711}
   MinDistance: 1
   MaxDistance: 20
-  Length: 33993
+  Length: 46069
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,7 +217,7 @@ MonoBehaviour:
   StringsBanks:
   - {fileID: 472317150789719487}
   cacheVersion: 131857
-  cacheTime: 639044540130739335
+  cacheTime: 639046434984873674
   SerializableEventsDict:
   - key: event:/Footsteps
     index: 0
@@ -242,7 +242,7 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639044540130739335
+  lastModified: 639046434984873674
   FileSizes:
   - Name: Desktop
     Value: 1056

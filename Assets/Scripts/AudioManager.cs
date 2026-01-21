@@ -1,6 +1,7 @@
 ﻿using FMOD.Studio;
 using FMODUnity;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -68,6 +69,9 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] public EventReference gameStateLoop;
 
+    [Header("Text")]
+    public TextMeshProUGUI statesText;
+
 
     ///* STATE MACHINE INT *///
 
@@ -77,17 +81,16 @@ public class AudioManager : MonoBehaviour
     public bool setEpicState = false;
     public bool setAnxietyState = false;
 
-    public float combatCooldown = 4f;
+    public float combatCooldown = 8f;
     public float lastCombatTriggerTimer = -99f;
 
     public float currentMagnitude = 0f;
 
     public EventInstance loopInstance;
-    public float idleTimer = 0f;
-    public float idleDelay = 16f;
+ 
     public bool isTransitioning = false;
-
-
+   
+   
     public string currentState = "Idle";
 
     public string queuedState = "Idle";
@@ -98,9 +101,15 @@ public class AudioManager : MonoBehaviour
 
     private int barDurationMS;
 
+    public float inactiveTime = 0f;
+    public float toIdleWaitTime = 32f;
 
+    public float lastTransitionTime = 0f;
+    public float transitionWaitTime = 5;
 
-
+    public string prevStateText = "Idle";
+    public string currentStateText = "Idle";
+    public string queuedStateText;
 
 
 
@@ -121,49 +130,108 @@ public class AudioManager : MonoBehaviour
     private void Update()
 
     {
+        LastMovementTimer();
+        TransitionTimer();
         if (isTransitioning) return;
-        queuedState = SetTheNextState();
+        if (isTransitionable())
+        {
+            queuedState = SetTheNextState();
+        }
+        
 
-        if (queuedState != currentState && !string.IsNullOrEmpty(queuedState))
+        if (queuedState != currentState &&!string.IsNullOrEmpty(queuedState))
 
         {
 
 
             StartCoroutine(ApplyChangeState(queuedState));
             currentState = queuedState;
-            Debug.Log("Current State is " + currentState);
+            Debug.Log("Queued State is " + currentState);
         }
-
+        statesText.text = $"Queued State is: {currentState} Current State is: {prevStateText}";
     }
 
     public string SetTheNextState()
     {
-
+        
         if (isPlayerDeath) return "Die";
         if (isVictory) return "Win";
         if (setEpicState) return "Epic";
-        bool isCombatActive = Time.time < lastCombatTriggerTimer + combatCooldown;
-        if (isCombatActive) return "Combat";
         if (setAnxietyState) return "Anxiety";
+        if (isCombatActive()) return "Combat";
         if (currentMagnitude > 0.1f) return "Explore";
-
-        return "Idle";
+        if (CanChangeToIdle())  return "Idle";
+        return queuedState;
     }
+    private bool isCombatActive()
+    {
 
+        if(Time.time < lastCombatTriggerTimer + combatCooldown)
+        { return true; }
+        else return false;
+    }
+    void LastMovementTimer()
+    {
+        if (currentMagnitude < 0.1f && !isCombatActive())
+        {
+            inactiveTime += Time.deltaTime;
+
+        }
+        else
+        {
+            inactiveTime = 0;
+        }
+    }
+    bool CanChangeToIdle()
+    {
+        
+        if (inactiveTime > toIdleWaitTime)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+       
+    }
     public void CombatTimer()
     {
         lastCombatTriggerTimer = Time.time;
     }
 
+    bool isTransitionable()
+    {
+        if(lastTransitionTime > transitionWaitTime)
+        {
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+    }
 
+    void TransitionTimer()
+    {
+        if(!isTransitioning)
+        {
+            lastTransitionTime += Time.deltaTime;
+        }
+    }
     public IEnumerator ApplyChangeState(string targetState)
 
     {
+        lastTransitionTime = 0f;
         isTransitioning = true;
-        int timeLinePos;
+       
+       
+
+            int timeLinePos;
         loopInstance.getTimelinePosition(out timeLinePos);
-        int currentPosInBar = timeLinePos % barDurationMS;
-        float timeToNextBar = (barDurationMS - currentPosInBar) / 1000f;
+        int currentPosInBar = timeLinePos % (barDurationMS*8);
+        float timeToNextBar = ((barDurationMS*8) - currentPosInBar) / 1000f;
 
         if (timeToNextBar > 0.05f)
         {
@@ -171,15 +239,17 @@ public class AudioManager : MonoBehaviour
         }
 
         loopInstance.setParameterByNameWithLabel("States", targetState);
-
+        currentStateText = targetState;
 
 
         Debug.Log("Transition " + targetState);
 
+       
+        
 
-        yield return new WaitForSeconds(4);
-
+        yield return new WaitForSeconds(1);
         loopInstance.setParameterByNameWithLabel("prevState", targetState);
+        prevStateText = targetState;
         Debug.Log("Current State set to " + targetState);
         isTransitioning = false;
 
