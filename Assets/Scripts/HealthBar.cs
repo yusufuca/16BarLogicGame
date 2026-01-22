@@ -1,18 +1,29 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI; // Required for UI components
+using UnityEngine.UI; 
 
 public class HealthBar : MonoBehaviour
 {
-    public Slider slider; // Drag the Slider component here
+    public Slider slider; 
+    public TextMeshProUGUI hp;
+
 
     public void SetMaxHealth(int health)
     {
         slider.maxValue = health;
         slider.value = health;
+        if (hp != null)
+        {
+            hp.text = health.ToString();
+        }
     }
 
     public void SetHealth(int health)
     {
         slider.value = health;
+        if (hp != null)
+        {
+            hp.text = health.ToString();
+        }
     }
 }

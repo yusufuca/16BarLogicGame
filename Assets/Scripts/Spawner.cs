@@ -7,7 +7,7 @@ public class SimpleSpawner : MonoBehaviour
     public int totalToSpawn = 5; // Hard limit
     public float spawnInterval = 2.0f; // Seconds between spawns
     public float spawnRadius = 4.0f; // Area size
-
+   
     // Internal State
     private float _timer;
     private int _spawnedCount;

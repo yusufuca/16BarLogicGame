@@ -23,6 +23,7 @@ public class CharacterStats : MonoBehaviour
 
     [Header("References")]
     public HealthBar healthBar;
+    public XpBar xpbar;
     public GameObject damageTextPrefab;
 
     private Animator _animator;
@@ -50,6 +51,7 @@ public class CharacterStats : MonoBehaviour
         currentHealth = maxHealth;
         _animator = GetComponent<Animator>();
         if (healthBar != null) healthBar.SetMaxHealth(maxHealth);
+        if(xpbar != null) xpbar.SetMaxXP(xpToNextLevel,currentLevel);
     }
 
     public void TakeDamage(int damage)
@@ -91,6 +93,7 @@ public class CharacterStats : MonoBehaviour
     public void GainXP(int amount)
     {
         currentXP += amount;
+        xpbar.SetXp(currentXP);
         Debug.Log("Gained " + amount + " XP. Total: " + currentXP);
 
         if (currentXP >= xpToNextLevel)
@@ -104,6 +107,7 @@ public class CharacterStats : MonoBehaviour
         currentLevel++;
         currentXP -= xpToNextLevel;
         xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.2f); // Harder to level up next time
+        xpbar.SetMaxXP(xpToNextLevel, currentLevel);
 
         // Stat Boosts
         maxHealth += 20;
@@ -143,9 +147,13 @@ public class CharacterStats : MonoBehaviour
             // Boss Died -> Win
             GameManager.GMInstance.Victory();
             AudioManager.AMInstance.isVictory = true;
+            Destroy(gameObject, 1f);
         }
-
-        DisableComponents();
+        else
+        {
+            Destroy(gameObject, 1f);
+        }
+            DisableComponents();
     }
 
     void DisableComponents()

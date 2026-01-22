@@ -71,6 +71,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("Text")]
     public TextMeshProUGUI statesText;
+    public TextMeshProUGUI timerText;
 
 
     ///* STATE MACHINE INT *///
@@ -91,9 +92,9 @@ public class AudioManager : MonoBehaviour
     public bool isTransitioning = false;
    
    
-    public string currentState = "Idle";
+    public string currentState = "Explore";
 
-    public string queuedState = "Idle";
+    public string queuedState = "Explore";
 
 
 
@@ -105,13 +106,13 @@ public class AudioManager : MonoBehaviour
     public float toIdleWaitTime = 32f;
 
     public float lastTransitionTime = 0f;
-    public float transitionWaitTime = 5;
+    public float transitionWaitTime = 18;
 
-    public string prevStateText = "Idle";
-    public string currentStateText = "Idle";
+    public string prevStateText = "Explore";
+    public string currentStateText = "Explore";
     public string queuedStateText;
 
-
+    private float combatTimer = 0f;
 
     private void Start()
 
@@ -119,8 +120,8 @@ public class AudioManager : MonoBehaviour
         barDurationMS = (int)((60 / BPM) * 4 * 1000);
         loopInstance.start();
 
-        loopInstance.setParameterByNameWithLabel("States", "Idle");
-        loopInstance.setParameterByNameWithLabel("prevState", "Idle");
+        loopInstance.setParameterByNameWithLabel("States", "Explore");
+        loopInstance.setParameterByNameWithLabel("prevState", "Explore");
 
 
     }
@@ -132,6 +133,21 @@ public class AudioManager : MonoBehaviour
     {
         LastMovementTimer();
         TransitionTimer();
+        statesText.text = $"Queued State is: {currentState} Current State is: {prevStateText} Is Transitionable: {isTransitionable()}";
+       
+        if(currentState == "Combat")
+        {
+            if (!isCombatActive())
+            {
+                combatTimer += Time.deltaTime;
+            }
+            
+        }
+        else
+        {
+            combatTimer = 0f;
+        }
+        timerText.text = $"Transition Timer: {Mathf.RoundToInt(lastTransitionTime)} Idle Timer: {Mathf.RoundToInt(inactiveTime)} Last Combat Timer: {Mathf.RoundToInt(combatTimer)}";
         if (isTransitioning) return;
         if (isTransitionable())
         {
@@ -148,7 +164,7 @@ public class AudioManager : MonoBehaviour
             currentState = queuedState;
             Debug.Log("Queued State is " + currentState);
         }
-        statesText.text = $"Queued State is: {currentState} Current State is: {prevStateText}";
+       
     }
 
     public string SetTheNextState()

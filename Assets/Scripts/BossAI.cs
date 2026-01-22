@@ -11,7 +11,7 @@ public class BossAI : MonoBehaviour
     [Header("Stats")]
     public float detectionRange = 20f;
     public float attackRange = 10f; // Ranged boss
-    public float moveSpeed = 3.5f;
+    public float moveSpeed = 0;
 
     [Header("Phase 2")]
     public bool isPhase2 = false;
@@ -28,11 +28,18 @@ public class BossAI : MonoBehaviour
     private CharacterStats _myStats;
     private float _nextAbilityTime;
 
+    public float patrolSpeed = 0f;
+    public float chaseSpeed = 5.5f;
+    private float _waitTimer;
+    public float waitTime = 2.0f;
+    public float patrolRadius = 10.0f;
+
     void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
         _myStats = GetComponent<CharacterStats>();
-        _agent.speed = moveSpeed;
+        
+        _agent.speed = patrolSpeed;
 
         GameObject p = GameObject.FindGameObjectWithTag("Player");
         if (p != null) _player = p.transform;
@@ -41,14 +48,47 @@ public class BossAI : MonoBehaviour
     void Update()
     {
         if (_player == null || _myStats.currentHealth <= 0) return;
+        float dist = Vector3.Distance(transform.position, _player.position);
+
+
+        if (dist <= attackRange)
+        {
+            currentState = BossState.Attacking;
+        }
+        else if (dist <= detectionRange)
+        {
+            currentState = BossState.Chasing;
+        }
+        else
+        {
+            currentState = BossState.Idle;
+        }
+
+        switch (currentState)
+        {
+            case BossState.Idle:
+                PatrolBehavior();
+                break;
+            case BossState.Chasing:
+                ChaseBehavior();
+                break;
+            case BossState.Attacking:
+                Attacking();
+                break;
+        }
+
+        Debug.Log($"Boss State is {currentState}");
 
         // Check Phase 2 Logic
         CheckPhase();
 
-        float dist = Vector3.Distance(transform.position, _player.position);
 
-        if (dist <= attackRange)
-        {
+    }
+   
+    void Attacking()
+    {
+       
+
             currentState = BossState.Attacking;
             _agent.ResetPath();
             transform.LookAt(_player);
@@ -58,19 +98,9 @@ public class BossAI : MonoBehaviour
                 PerformRandomAbility();
                 _nextAbilityTime = Time.time + abilityCooldown;
             }
-        }
-        else if (dist <= detectionRange)
-        {
-            currentState = BossState.Chasing;
-            _agent.SetDestination(_player.position);
-            AudioManager.AMInstance.setEpicState = true;
-        }
-        else if (dist > detectionRange && dist <= detectionRange + 40f)
-        { 
-            AudioManager.AMInstance.setAnxietyState = true;
-        }
+        
+      
     }
-
     void CheckPhase()
     {
         // GDD: Phase 2 increases speed/damage 
@@ -83,7 +113,7 @@ public class BossAI : MonoBehaviour
     void EnterPhase2()
     {
         isPhase2 = true;
-        _agent.speed *= phase2SpeedMultiplier;
+       
         abilityCooldown *= 0.6f; // Attack faster
 
         // Visual Feedback: Change color to Red
@@ -125,10 +155,12 @@ public class BossAI : MonoBehaviour
     // Immediate Hitscan damage (Hit check)
     void RevolverBlast()
     {
+        
         Debug.Log("Boss used Revolver Blast!");
         // Simple Raycast attack
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, attackRange))
+        if (Physics.Raycast(firePoint.position, transform.forward, out RaycastHit hit, attackRange))
         {
+            Debug.DrawRay(transform.position, transform.forward * attackRange, Color.red, 1f);
             if (hit.collider.CompareTag("Player"))
             {
                 CharacterStats pStats = hit.collider.GetComponent<CharacterStats>();
@@ -149,5 +181,39 @@ public class BossAI : MonoBehaviour
             transform.LookAt(_player);
             Debug.Log("Boss Blinked!");
         }
+    }
+
+    void PatrolBehavior()
+    {
+        _agent.speed = patrolSpeed;
+
+        if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
+        {
+            _waitTimer += Time.deltaTime;
+            if (_waitTimer >= waitTime)
+            {
+                MoveToRandomPoint();
+                _waitTimer = 0f;
+            }
+        }
+    }
+    void MoveToRandomPoint()
+    {
+        Vector3 randomDirection = Random.insideUnitSphere * patrolRadius;
+        randomDirection += transform.position;
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDirection, out hit, patrolRadius, 1))
+        {
+            _agent.SetDestination(hit.position);
+        }
+    }
+
+    void ChaseBehavior()
+    {
+
+        _agent.speed = chaseSpeed;
+        _agent.SetDestination(_player.position); // Update path to Player constantly
+        AudioManager.AMInstance.setEpicState = true;
+
     }
 }

@@ -6,18 +6,20 @@ public class TPSMovement : MonoBehaviour
 {
     [Header("Stats")]
     public float moveSpeed = 6.0f;
+    public float walkSpeed = 6;
+    public float runSpeed = 10f;
+    public float jumpHeight = 6f;
     public float turnSmoothTime = 0.1f;
     public float gravity = -9.81f;
 
     [Header("References")]
     public Transform mainCamera;
+    public GameObject texts;
 
     private CharacterController _controller;
     private Animator _animator;
     private float _turnSmoothVelocity;
     private Vector3 _velocity;
-    private float combatToExploreTimer = 0f;
-    private float combatToExploreDelay = 16f;
 
     void Start()
     {
@@ -33,9 +35,21 @@ public class TPSMovement : MonoBehaviour
 
     void Update()
     {
-        
-        // 1. Input Polling
-        float horizontal = Input.GetAxisRaw("Horizontal");
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            texts.SetActive(!texts.activeSelf);
+        }
+        if (Input.GetKey(KeyCode.LeftShift)) 
+        {
+            moveSpeed = runSpeed;
+        }
+        else
+        {
+            moveSpeed = walkSpeed;
+        }
+
+            // 1. Input Polling
+            float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
         // Create a direction vector strictly from Input
@@ -62,6 +76,11 @@ public class TPSMovement : MonoBehaviour
         _velocity.y += gravity * Time.deltaTime;
         _controller.Move(_velocity * Time.deltaTime);
 
+        if (Input.GetKeyDown(KeyCode.Space) && _controller.isGrounded)
+        {
+            _velocity.y = jumpHeight;
+            _controller.Move(_velocity * Time.deltaTime);
+        }
         // 4. Animation Logic (CHANGED TO INPUT)
         // Instead of asking "How fast am I moving?", we ask "How much am I pressing the keys?"
         // This breaks the deadlock.
