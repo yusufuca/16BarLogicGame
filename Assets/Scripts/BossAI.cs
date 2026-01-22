@@ -160,6 +160,7 @@ public class BossAI : MonoBehaviour
         // Simple Raycast attack
         if (Physics.Raycast(firePoint.position, transform.forward, out RaycastHit hit, attackRange))
         {
+            AudioManager.AMInstance.PlayGunBlastSFX();
             Debug.DrawRay(transform.position, transform.forward * attackRange, Color.red, 1f);
             if (hit.collider.CompareTag("Player"))
             {

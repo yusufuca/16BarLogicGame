@@ -1,5 +1,32 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9113164554191289634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Amb
+  m_EditorClassIdentifier: 
+  Path: event:/Amb
+  Guid:
+    Data1: 1588320693
+    Data2: 1287794623
+    Data3: -1552812872
+    Data4: 213316664
+  Banks:
+  - {fileID: -5761889771633861848}
+  IsStream: 1
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 180000
 --- !u!114 &-8427106035325335726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,10 +130,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639046456180076040
+  lastModified: 639046717596858920
   FileSizes:
   - Name: Desktop
-    Value: 868800
+    Value: 3150528
   Exists: 1
 --- !u!114 &-5213771261302065419
 MonoBehaviour:
@@ -211,13 +238,16 @@ MonoBehaviour:
   - {fileID: -4086246098601612091}
   - {fileID: -5213771261302065419}
   - {fileID: -3338419373018963047}
+  - {fileID: 3521328979854860577}
+  - {fileID: 8247344850924525447}
+  - {fileID: -9113164554191289634}
   EditorParameters: []
   MasterBanks:
   - {fileID: -5761889771633861848}
   StringsBanks:
   - {fileID: 472317150789719487}
   cacheVersion: 131857
-  cacheTime: 639046456180086050
+  cacheTime: 639046717597395774
   SerializableEventsDict:
   - key: event:/Footsteps
     index: 0
@@ -227,6 +257,12 @@ MonoBehaviour:
     index: 2
   - key: event:/GameStates
     index: 3
+  - key: event:/GunBlast
+    index: 4
+  - key: event:/PoisionBallBreak
+    index: 5
+  - key: event:/Amb
+    index: 6
 --- !u!114 &472317150789719487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,11 +278,38 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639046456180086050
+  lastModified: 639046717597395774
   FileSizes:
   - Name: Desktop
-    Value: 1056
+    Value: 1294
   Exists: 1
+--- !u!114 &3521328979854860577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/GunBlast
+  m_EditorClassIdentifier: 
+  Path: event:/GunBlast
+  Guid:
+    Data1: 729198681
+    Data2: 1100859596
+    Data3: -1814914686
+    Data4: 1153601825
+  Banks:
+  - {fileID: -5761889771633861848}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2000
 --- !u!114 &7051158087177705711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,3 +342,30 @@ MonoBehaviour:
   - Win
   - Die
   Exists: 1
+--- !u!114 &8247344850924525447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/PoisionBallBreak
+  m_EditorClassIdentifier: 
+  Path: event:/PoisionBallBreak
+  Guid:
+    Data1: -724931659
+    Data2: 1220967083
+    Data3: -1932779878
+    Data4: -1619742479
+  Banks:
+  - {fileID: -5761889771633861848}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 602

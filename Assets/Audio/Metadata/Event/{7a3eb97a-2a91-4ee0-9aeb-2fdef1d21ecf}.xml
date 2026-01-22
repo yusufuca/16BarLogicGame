@@ -73,7 +73,7 @@
 			<destination>{93df2c5f-28ae-4be3-86ad-e36de6376622}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{cc01f18e-1f22-4900-9162-51445956f791}</destination>
+			<destination>{b70e7f99-c739-420e-ad77-8d1aba8ca87b}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{a423b1e5-3e3a-4f2d-a8b1-f3a632b99528}" />
@@ -246,6 +246,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{5c4abcb6-fa9d-44d0-9860-6cafdd91c2d0}">
+		<property name="volume">
+			<value>-5.5</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{9fadabcf-bcf2-4714-994a-f2651703165e}</destination>
 		</relationship>
@@ -305,6 +308,9 @@
 		<property name="length">
 			<value>3.9930612244897961</value>
 		</property>
+		<property name="volume">
+			<value>-4.5</value>
+		</property>
 		<relationship name="fadeOutCurve">
 			<destination>{8ae52ca7-db01-466a-a445-2ebdf739c9dc}</destination>
 		</relationship>
@@ -319,6 +325,9 @@
 		<property name="length">
 			<value>3.9930612244897961</value>
 		</property>
+		<property name="volume">
+			<value>-6.5</value>
+		</property>
 		<relationship name="fadeOutCurve">
 			<destination>{e45e73d6-1db8-4495-852e-fc9c347b25db}</destination>
 		</relationship>
@@ -332,9 +341,6 @@
 		</property>
 		<property name="length">
 			<value>3.9930612244897965</value>
-		</property>
-		<property name="volume">
-			<value>-12</value>
 		</property>
 		<relationship name="fadeInCurve">
 			<destination>{35610235-14c4-431f-a548-fd67f85a613b}</destination>
@@ -352,9 +358,6 @@
 		</property>
 		<property name="timelockedOffset">
 			<value>0.065755499382849081</value>
-		</property>
-		<property name="volume">
-			<value>-12</value>
 		</property>
 		<relationship name="fadeInCurve">
 			<destination>{05f61228-8101-459b-bfed-d5b0b64eca3e}</destination>
@@ -409,6 +412,9 @@
 		<property name="length">
 			<value>16.056000000000001</value>
 		</property>
+		<property name="volume">
+			<value>-5</value>
+		</property>
 		<relationship name="triggerConditions">
 			<destination>{48fc3f8c-7f9a-489d-81b3-7f4a13e6e54e}</destination>
 		</relationship>
@@ -433,6 +439,9 @@
 	<object class="SingleSound" id="{f527b846-3d57-49a3-960b-ee3632dfb28e}">
 		<property name="length">
 			<value>16.056000000000001</value>
+		</property>
+		<property name="volume">
+			<value>5</value>
 		</property>
 		<relationship name="triggerConditions">
 			<destination>{cd535319-97cf-4643-8b85-38cba485b531}</destination>
@@ -509,9 +518,6 @@
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{f2b169a8-622d-4a19-bca5-43b9bcdf6dbb}">
-		<property name="volume">
-			<value>-11.5</value>
-		</property>
 		<property name="name">
 			<value>Anxiety</value>
 		</property>
@@ -528,6 +534,9 @@
 	<object class="SingleSound" id="{999d30f1-14f6-451c-81c2-c279a79d568e}">
 		<property name="length">
 			<value>16.056000000000001</value>
+		</property>
+		<property name="volume">
+			<value>-5.5</value>
 		</property>
 		<relationship name="triggerConditions">
 			<destination>{e5a59040-9bdf-4555-b067-c3122ba8750f}</destination>
@@ -604,9 +613,6 @@
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{e40e1dff-d7b8-4115-ab92-d50a77be6cf7}">
-		<property name="volume">
-			<value>-12</value>
-		</property>
 		<property name="name">
 			<value>Epic</value>
 		</property>
@@ -623,6 +629,9 @@
 	<object class="SingleSound" id="{1df470f4-ca4b-4a74-96db-b15c638dd165}">
 		<property name="length">
 			<value>16.056000000000001</value>
+		</property>
+		<property name="volume">
+			<value>5</value>
 		</property>
 		<relationship name="triggerConditions">
 			<destination>{06d28e9c-3629-4ac3-b868-2ebf9f442697}</destination>

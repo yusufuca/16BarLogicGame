@@ -43,7 +43,7 @@ public class BossProjectile : MonoBehaviour
 
     void DestroyProjectile()
     {
-       
+        AudioManager.AMInstance.PlayPoisinBallBreakSFX();
         Destroy(gameObject);
     }
 }

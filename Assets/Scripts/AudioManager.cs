@@ -42,6 +42,7 @@ public class AudioManager : MonoBehaviour
 
 
         loopInstance = RuntimeManager.CreateInstance(gameStateLoop);
+        ambInstance = RuntimeManager.CreateInstance(ambSFX);
 
 
     }
@@ -53,22 +54,23 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private LayerMask surface;
 
-    [Header("FootstepSFX")]
+    [Header("SFX")]
 
     [SerializeField] private EventReference footstepSFX;
 
-    [Header("SwordSwingSFX")]
+   
 
     [SerializeField] private EventReference swordSwingSFX;
 
-    [Header("DamageImpactSFX")]
+  
 
     [SerializeField] private EventReference damageImpactSFX;
 
-    [Header("GameStateLoops")]
-
+   
     [SerializeField] public EventReference gameStateLoop;
-
+    [SerializeField] public EventReference poisionBallBreakSFX;
+    [SerializeField] public EventReference gunBlastSFX;
+    [SerializeField] public EventReference ambSFX;
     [Header("Text")]
     public TextMeshProUGUI statesText;
     public TextMeshProUGUI timerText;
@@ -88,6 +90,7 @@ public class AudioManager : MonoBehaviour
     public float currentMagnitude = 0f;
 
     public EventInstance loopInstance;
+    public EventInstance ambInstance;
  
     public bool isTransitioning = false;
    
@@ -119,7 +122,7 @@ public class AudioManager : MonoBehaviour
     {
         barDurationMS = (int)((60 / BPM) * 4 * 1000);
         loopInstance.start();
-
+        ambInstance.start();
         loopInstance.setParameterByNameWithLabel("States", "Explore");
         loopInstance.setParameterByNameWithLabel("prevState", "Explore");
 
@@ -361,6 +364,15 @@ public class AudioManager : MonoBehaviour
 
     }
 
+    public void PlayPoisinBallBreakSFX()
+    {
+        RuntimeManager.PlayOneShot(poisionBallBreakSFX);
 
+    }
+
+    public void PlayGunBlastSFX()
+    {
+        RuntimeManager.PlayOneShot(gunBlastSFX);
+    }
 
 }

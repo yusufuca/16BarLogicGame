@@ -63,14 +63,14 @@ public class CharacterStats : MonoBehaviour
             {
                 TakeDamage(poisonDamagePerTick); 
                 poisonTickTimer = 1f;
-                Debug.Log("Zehir hasarı alındı!");
+               
             }
 
           
             if (poisonDurationTimer <= 0)
             {
                 isPoisoned = false;
-                Debug.Log("Zehir etkisi geçti.");
+               
             }
         }
         }
