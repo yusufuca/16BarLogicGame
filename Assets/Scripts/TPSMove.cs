@@ -1,11 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
 public class TPSMovement : MonoBehaviour
 {
     [Header("Stats")]
-    public float moveSpeed = 6.0f;
     public float walkSpeed = 6;
     public float runSpeed = 10f;
     public float jumpHeight = 6f;
@@ -13,62 +12,73 @@ public class TPSMovement : MonoBehaviour
     public float gravity = -9.81f;
 
     [Header("References")]
-    public Transform mainCamera;
+    public Transform mainCamera; 
+    public TPSCamera tpsCameraScript; // Need reference to Camera Script
     public GameObject texts;
+
+    public float strafeTurnSpeed = 5.0f;
 
     private CharacterController _controller;
     private Animator _animator;
     private float _turnSmoothVelocity;
     private Vector3 _velocity;
+    private float _currentSpeed;
 
     void Start()
     {
         _controller = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
+        _animator.applyRootMotion = false;
 
         if (mainCamera == null && Camera.main != null)
             mainCamera = Camera.main.transform;
 
-        // SAFETY: Ensure Root Motion is OFF via code to prevent mistakes
-        _animator.applyRootMotion = false;
+        // Auto-find camera script if not assigned
+        if (tpsCameraScript == null && mainCamera != null)
+            tpsCameraScript = mainCamera.GetComponent<TPSCamera>();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            texts.SetActive(!texts.activeSelf);
-        }
-        if (Input.GetKey(KeyCode.LeftShift)) 
-        {
-            moveSpeed = runSpeed;
-        }
-        else
-        {
-            moveSpeed = walkSpeed;
-        }
+        // UI Toggle
+        if (Input.GetKeyDown(KeyCode.Tab)) texts.SetActive(!texts.activeSelf);
 
-            // 1. Input Polling
-            float horizontal = Input.GetAxisRaw("Horizontal");
+        // Speed Control
+        _currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+
+        // 1. Input
+        float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
-
-        // Create a direction vector strictly from Input
         Vector3 inputDir = new Vector3(horizontal, 0f, vertical).normalized;
 
-        // 2. Movement Logic
+        // 2. Movement & Rotation Logic
         if (inputDir.magnitude >= 0.1f)
         {
-            // Calculate rotation relative to camera
             float targetAngle = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg + mainCamera.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _turnSmoothVelocity, turnSmoothTime);
 
-            // Rotate
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            // LOCK-ON LOGIC CHECK
+            if (tpsCameraScript != null && tpsCameraScript.IsLocked && tpsCameraScript.CurrentEnemyTarget != null)
+            {
+                // STRAFING: Look at Enemy, Move relative to camera
+                Vector3 dirToEnemy = tpsCameraScript.CurrentEnemyTarget.position - transform.position;
+                dirToEnemy.y = 0; // Don't look up/down
+                
+                Quaternion lookRot = Quaternion.LookRotation(dirToEnemy);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * strafeTurnSpeed);
 
-            // Move
-            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            _controller.Move(moveDir.normalized * moveSpeed * Time.deltaTime);
-            
+                // Movement Direction is still calculated from camera, but we don't rotate to it
+                Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+                _controller.Move(moveDir.normalized * _currentSpeed * Time.deltaTime);
+            }
+            else
+            {
+                // FREE MOVEMENT: Look at movement direction
+                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _turnSmoothVelocity, turnSmoothTime);
+                transform.rotation = Quaternion.Euler(0f, angle, 0f);
+
+                Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+                _controller.Move(moveDir.normalized * _currentSpeed * Time.deltaTime);
+            }
         }
 
         // 3. Gravity
@@ -76,28 +86,21 @@ public class TPSMovement : MonoBehaviour
         _velocity.y += gravity * Time.deltaTime;
         _controller.Move(_velocity * Time.deltaTime);
 
+        // Jump
         if (Input.GetKeyDown(KeyCode.Space) && _controller.isGrounded)
         {
             _velocity.y = jumpHeight;
             _controller.Move(_velocity * Time.deltaTime);
         }
-        // 4. Animation Logic (CHANGED TO INPUT)
-        // Instead of asking "How fast am I moving?", we ask "How much am I pressing the keys?"
-        // This breaks the deadlock.
+
+        // 4. Animation
         float currentInputMagnitude = inputDir.magnitude;
-
         AudioManager.AMInstance.currentMagnitude = currentInputMagnitude;
-        
-
-            // Send exactly 0.0 or 1.0 based on key press
-            _animator.SetFloat("Speed", currentInputMagnitude, 0.1f, Time.deltaTime);
+        _animator.SetFloat("Speed", currentInputMagnitude, 0.1f, Time.deltaTime);
     }
 
     public void OnStep()
     {
         AudioManager.AMInstance.DetectSurface(transform.root);
-
     }
-
-    
 }

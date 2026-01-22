@@ -839,6 +839,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: cb33a48699d642c99396b004ffbfbd1c, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: cb33a48699d642c99396b004ffbfbd1c, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -1322,6 +1326,7 @@ MonoBehaviour:
   xpValue: 20
   itemToDrop: {fileID: 2195480022752132373, guid: d8a9a2cfe9aedd84cb5d71aab19d2425, type: 3}
   healthBar: {fileID: 6263542606421585955}
+  xpbar: {fileID: 0}
   damageTextPrefab: {fileID: 4168428217786865534, guid: bcddbf6acc8e8b44bb2f87e82b07b65f, type: 3}
 --- !u!114 &6263542606421585955
 MonoBehaviour:
@@ -1336,6 +1341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 9150205416143618092}
+  hp: {fileID: 0}
 --- !u!4 &5324505939634834364 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cb33a48699d642c99396b004ffbfbd1c, type: 3}
