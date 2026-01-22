@@ -2,6 +2,7 @@
 using FMODUnity;
 using System.Collections;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
 
@@ -42,6 +43,8 @@ public class AudioManager : MonoBehaviour
 
 
         loopInstance = RuntimeManager.CreateInstance(gameStateLoop);
+        linearInstance = RuntimeManager.CreateInstance(lineerStates);
+        transitionInstance = RuntimeManager.CreateInstance(lineerStatesTranisitions);
         ambInstance = RuntimeManager.CreateInstance(ambSFX);
 
 
@@ -71,12 +74,17 @@ public class AudioManager : MonoBehaviour
     [SerializeField] public EventReference poisionBallBreakSFX;
     [SerializeField] public EventReference gunBlastSFX;
     [SerializeField] public EventReference ambSFX;
+    [SerializeField] public EventReference lineerStates;
+    [SerializeField] public EventReference lineerStatesTranisitions;
+
     [Header("Text")]
     public TextMeshProUGUI statesText;
     public TextMeshProUGUI timerText;
 
 
     ///* STATE MACHINE INT *///
+
+    public bool isLinear = true;
 
 
     public bool isPlayerDeath = false;
@@ -90,6 +98,9 @@ public class AudioManager : MonoBehaviour
     public float currentMagnitude = 0f;
 
     public EventInstance loopInstance;
+    public EventInstance linearInstance;
+    public EventInstance transitionInstance;
+
     public EventInstance ambInstance;
  
     public bool isTransitioning = false;
@@ -117,11 +128,29 @@ public class AudioManager : MonoBehaviour
 
     private float combatTimer = 0f;
 
+
+    
+
     private void Start()
 
     {
         barDurationMS = (int)((60 / BPM) * 4 * 1000);
-        loopInstance.start();
+        if(GameManager.GMInstance.isLinear)
+        {
+            isLinear = true;
+        }
+        else
+        {
+            isLinear = false;
+        }
+        if (!isLinear)
+        {
+            loopInstance.start();
+        }
+        else
+        {
+            linearInstance.start();
+        }
         ambInstance.start();
         loopInstance.setParameterByNameWithLabel("States", "Explore");
         loopInstance.setParameterByNameWithLabel("prevState", "Explore");
@@ -135,39 +164,76 @@ public class AudioManager : MonoBehaviour
 
     {
         LastMovementTimer();
-        TransitionTimer();
-        statesText.text = $"Queued State is: {currentState} Current State is: {prevStateText} Is Transitionable: {isTransitionable()}";
-       
-        if(currentState == "Combat")
+        if (isLinear) 
         {
-            if (!isCombatActive())
+            TransitionTimer();
+            statesText.text = $"Queued State is: {currentState} Current State is: {prevStateText} Is Transitionable: {isTransitionable()}";
+
+            if (currentState == "Combat")
             {
-                combatTimer += Time.deltaTime;
+                if (!isCombatActive())
+                {
+                    combatTimer += Time.deltaTime;
+                }
+
             }
-            
+            else
+            {
+                combatTimer = 0f;
+            }
+            timerText.text = $"Transition Timer: {Mathf.RoundToInt(lastTransitionTime)} Idle Timer: {Mathf.RoundToInt(inactiveTime)} Last Combat Timer: {Mathf.RoundToInt(combatTimer)}";
+
+
+            if (isTransitioning) return;
+            if (isTransitionable())
+            {
+                queuedState = SetTheNextState();
+            }
+
+           
+            if (queuedState != currentState && !string.IsNullOrEmpty(queuedState))
+            {
+                StartCoroutine(ApplyChangeStateLinear(queuedState));
+                currentState = queuedState;
+            }
         }
         else
         {
-            combatTimer = 0f;
+
+
+            TransitionTimer();
+            statesText.text = $"Queued State is: {currentState} Current State is: {prevStateText} Is Transitionable: {isTransitionable()}";
+
+            if (currentState == "Combat")
+            {
+                if (!isCombatActive())
+                {
+                    combatTimer += Time.deltaTime;
+                }
+
+            }
+            else
+            {
+                combatTimer = 0f;
+            }
+            timerText.text = $"Transition Timer: {Mathf.RoundToInt(lastTransitionTime)} Idle Timer: {Mathf.RoundToInt(inactiveTime)} Last Combat Timer: {Mathf.RoundToInt(combatTimer)}";
+            if (isTransitioning) return;
+            if (isTransitionable())
+            {
+                queuedState = SetTheNextState();
+            }
+
+
+            if (queuedState != currentState && !string.IsNullOrEmpty(queuedState))
+
+            {
+
+
+                StartCoroutine(ApplyChangeState(queuedState));
+                currentState = queuedState;
+                
+            }
         }
-        timerText.text = $"Transition Timer: {Mathf.RoundToInt(lastTransitionTime)} Idle Timer: {Mathf.RoundToInt(inactiveTime)} Last Combat Timer: {Mathf.RoundToInt(combatTimer)}";
-        if (isTransitioning) return;
-        if (isTransitionable())
-        {
-            queuedState = SetTheNextState();
-        }
-        
-
-        if (queuedState != currentState &&!string.IsNullOrEmpty(queuedState))
-
-        {
-
-
-            StartCoroutine(ApplyChangeState(queuedState));
-            currentState = queuedState;
-            Debug.Log("Queued State is " + currentState);
-        }
-       
     }
 
     public string SetTheNextState()
@@ -274,7 +340,41 @@ public class AudioManager : MonoBehaviour
 
     }
 
+    public IEnumerator ApplyChangeStateLinear(string targetState)
 
+    {
+        lastTransitionTime = 0f;
+        isTransitioning = true;
+
+
+
+        int timeLinePos;
+        linearInstance.getTimelinePosition(out timeLinePos);
+        int currentPosInBar = timeLinePos % barDurationMS;
+        float timeToNextBar = (barDurationMS - currentPosInBar) / 1000f;
+
+        if (timeToNextBar > 0.05f)
+        {
+            yield return new WaitForSeconds(timeToNextBar - 0.05f);
+        }
+        linearInstance.setParameterByNameWithLabel("States", targetState);
+        transitionInstance.setParameterByNameWithLabel("States", targetState);
+        transitionInstance.start();
+        currentStateText = targetState;
+
+        yield return new WaitForSeconds(barDurationMS / 1000);
+        transitionInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        
+        
+
+        transitionInstance.setParameterByNameWithLabel("prevState", targetState);
+
+        prevStateText = targetState;
+        isTransitioning = false;
+
+    }
+
+  
 
     public void DetectSurface(Transform entitiyTransform)
 

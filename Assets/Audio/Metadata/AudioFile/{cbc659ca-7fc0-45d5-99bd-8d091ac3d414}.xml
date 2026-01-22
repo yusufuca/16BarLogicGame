@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{cbc659ca-7fc0-45d5-99bd-8d091ac3d414}">
+		<property name="assetPath">
+			<value>TranslateVoice/third loop in.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>2.0640000000000001</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{6d3e93f1-0b67-4f96-b3d8-8db153476108}</destination>
+		</relationship>
+	</object>
+</objects>

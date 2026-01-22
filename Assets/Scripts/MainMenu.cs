@@ -1,8 +1,11 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    public TextMeshProUGUI toggleText;
+
     // Called by "Play" Button
     public void PlayGame()
     {
@@ -15,5 +18,18 @@ public class MainMenu : MonoBehaviour
     {
         Debug.Log("QUIT GAME REQUESTED");
         Application.Quit();
+    }
+    public void ToggleLoopMode()
+    {
+       GameManager.GMInstance.isLinear = !GameManager.GMInstance.isLinear;
+        toggleText.text = "Linear";
+        if(GameManager.GMInstance.isLinear)
+        {
+            toggleText.text = "Linear";
+        }
+        else
+        {
+            toggleText.text = "Loop";
+        }
     }
 }

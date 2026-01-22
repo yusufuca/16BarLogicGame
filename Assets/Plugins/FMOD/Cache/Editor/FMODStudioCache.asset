@@ -130,10 +130,10 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639046717596858920
+  lastModified: 639047141092818061
   FileSizes:
   - Name: Desktop
-    Value: 3150528
+    Value: 3329248
   Exists: 1
 --- !u!114 &-5213771261302065419
 MonoBehaviour:
@@ -218,6 +218,34 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 46069
+--- !u!114 &-2791288646466289347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/LinearStates
+  m_EditorClassIdentifier: 
+  Path: event:/LinearStates
+  Guid:
+    Data1: -1017418962
+    Data2: 1141922689
+    Data3: -1219137649
+    Data4: -1908586672
+  Banks:
+  - {fileID: -5761889771633861848}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters:
+  - {fileID: 1769416084797357096}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 8000
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,13 +269,15 @@ MonoBehaviour:
   - {fileID: 3521328979854860577}
   - {fileID: 8247344850924525447}
   - {fileID: -9113164554191289634}
+  - {fileID: 8723830048450246510}
+  - {fileID: -2791288646466289347}
   EditorParameters: []
   MasterBanks:
   - {fileID: -5761889771633861848}
   StringsBanks:
   - {fileID: 472317150789719487}
   cacheVersion: 131857
-  cacheTime: 639046717597395774
+  cacheTime: 639047141092858530
   SerializableEventsDict:
   - key: event:/Footsteps
     index: 0
@@ -263,6 +293,10 @@ MonoBehaviour:
     index: 5
   - key: event:/Amb
     index: 6
+  - key: event:/LinearTransitions
+    index: 7
+  - key: event:/LinearStates
+    index: 8
 --- !u!114 &472317150789719487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -278,10 +312,106 @@ MonoBehaviour:
   Path: Assets/Audio/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639046717597395774
+  lastModified: 639047141092858530
   FileSizes:
   - Name: Desktop
-    Value: 1294
+    Value: 1392
+  Exists: 1
+--- !u!114 &1423986835881644715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/LinearTransitions/States
+  m_EditorClassIdentifier: 
+  Name: States
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 1
+  ID:
+    data1: 521807815
+    data2: 3418521464
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Idle
+  - Explore
+  - Combat
+  - Regen
+  - Anxiety
+  - Epic
+  - Win
+  - Die
+  Exists: 1
+--- !u!114 &1769416084797357096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/LinearStates/States
+  m_EditorClassIdentifier: 
+  Name: States
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 1
+  ID:
+    data1: 521807815
+    data2: 3418521464
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Idle
+  - Explore
+  - Combat
+  - Regen
+  - Anxiety
+  - Epic
+  - Win
+  - Die
+  Exists: 1
+--- !u!114 &3028250493902725222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/LinearTransitions/prevState
+  m_EditorClassIdentifier: 
+  Name: prevState
+  StudioPath: 
+  Min: 0
+  Max: 7
+  Default: 1
+  ID:
+    data1: 1353233755
+    data2: 971463213
+  Type: 2
+  IsGlobal: 0
+  Labels:
+  - Idle
+  - Explore
+  - Combat
+  - Regen
+  - Anxiety
+  - Epic
+  - Win
+  - Die
   Exists: 1
 --- !u!114 &3521328979854860577
 MonoBehaviour:
@@ -369,3 +499,32 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 602
+--- !u!114 &8723830048450246510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/LinearTransitions
+  m_EditorClassIdentifier: 
+  Path: event:/LinearTransitions
+  Guid:
+    Data1: 458871836
+    Data2: 1184742796
+    Data3: -983851893
+    Data4: -406819850
+  Banks:
+  - {fileID: -5761889771633861848}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 3028250493902725222}
+  - {fileID: 1423986835881644715}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 2000

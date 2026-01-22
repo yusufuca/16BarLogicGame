@@ -1,9 +1,34 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager GMInstance;
+
+    void Awake()
+    {
+
+        if (GMInstance != null && GMInstance != this)
+
+        {
+
+            Destroy(gameObject);
+
+        }
+
+        else
+
+        {
+
+            GMInstance = this;
+
+            DontDestroyOnLoad(gameObject);
+
+        }
+    }
+
+
 
     [Header("UI References")]
     public GameObject gameOverUI;
@@ -13,11 +38,9 @@ public class GameManager : MonoBehaviour
     public bool isPaused = false;
     private bool _gameHasEnded = false;
 
-    void Awake()
-    {
-        if (GMInstance == null) GMInstance = this;
-        else Destroy(gameObject);
-    }
+    public bool isLinear = true;
+
+    
 
     void Update()
     {
