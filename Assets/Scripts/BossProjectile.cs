@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class BossProjectile : MonoBehaviour
 {
-    public float speed = 10f;
-    public int damage = 15;
-    public float lifeTime = 3f;
-    public GameObject impactEffect; // Drag a particle here if you have one
+    public float speed = 15f;
+    public int impactDamage = 5;
+    public int poisonDamage = 5; 
+    public float poisonDuration = 5f; 
+    public float lifeTime = 5f;
 
     void Start()
     {
-        Destroy(gameObject, lifeTime); // Auto-destroy to prevent lag
+        Destroy(gameObject, lifeTime);
     }
 
     void Update()
     {
-        // Move forward constantly
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
 
@@ -23,21 +23,27 @@ public class BossProjectile : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             CharacterStats playerStats = other.GetComponent<CharacterStats>();
+
             if (playerStats != null)
             {
-                playerStats.TakeDamage(damage);
+              
+                playerStats.TakeDamage(impactDamage);
+
+               
+                playerStats.ApplyPoison(poisonDamage, poisonDuration);
             }
+
             DestroyProjectile();
         }
         else if (other.gameObject.layer == LayerMask.NameToLayer("Ground") || other.gameObject.layer == LayerMask.NameToLayer("Default"))
         {
-            DestroyProjectile(); // Hit a wall/floor
+            DestroyProjectile();
         }
     }
 
     void DestroyProjectile()
     {
-        if (impactEffect != null) Instantiate(impactEffect, transform.position, Quaternion.identity);
+       
         Destroy(gameObject);
     }
 }

@@ -1,10 +1,16 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
     [Header("Health")]
     public int maxHealth = 100;
     public int currentHealth;
+
+    [Header("Status Effects")]
+    public bool isPoisoned = false;
+    private float poisonDurationTimer;
+    private float poisonTickTimer;
+    private int poisonDamagePerTick;
 
     [Header("Regen Logic")]
     public bool isRegenerating = false;
@@ -44,7 +50,30 @@ public class CharacterStats : MonoBehaviour
                 }
             }
         }
-    }
+        if (isPoisoned)
+        {
+            
+            poisonDurationTimer -= Time.deltaTime;
+
+            
+            poisonTickTimer -= Time.deltaTime;
+
+            
+            if (poisonTickTimer <= 0)
+            {
+                TakeDamage(poisonDamagePerTick); 
+                poisonTickTimer = 1f;
+                Debug.Log("Zehir hasarı alındı!");
+            }
+
+          
+            if (poisonDurationTimer <= 0)
+            {
+                isPoisoned = false;
+                Debug.Log("Zehir etkisi geçti.");
+            }
+        }
+        }
 
     void Start()
     {
@@ -52,6 +81,22 @@ public class CharacterStats : MonoBehaviour
         _animator = GetComponent<Animator>();
         if (healthBar != null) healthBar.SetMaxHealth(maxHealth);
         if(xpbar != null) xpbar.SetMaxXP(xpToNextLevel,currentLevel);
+    }
+
+    public void ApplyPoison(int damagePerSecond, float duration)
+    {
+        if (isPoisoned)
+        {
+            
+            poisonDurationTimer = duration;
+        }
+        else
+        {
+            isPoisoned = true;
+            poisonDamagePerTick = damagePerSecond;
+            poisonDurationTimer = duration;
+            poisonTickTimer = 1f; 
+        }
     }
 
     public void TakeDamage(int damage)
