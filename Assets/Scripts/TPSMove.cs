@@ -14,7 +14,7 @@ public class TPSMovement : MonoBehaviour
     [Header("References")]
     public Transform mainCamera; 
     public TPSCamera tpsCameraScript; // Need reference to Camera Script
-    public GameObject texts;
+    
 
     public float strafeTurnSpeed = 5.0f;
 
@@ -40,8 +40,7 @@ public class TPSMovement : MonoBehaviour
 
     void Update()
     {
-        // UI Toggle
-        if (Input.GetKeyDown(KeyCode.Tab)) texts.SetActive(!texts.activeSelf);
+               
 
         // Speed Control
         _currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;

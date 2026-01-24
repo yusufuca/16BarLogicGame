@@ -10,18 +10,18 @@ public class BossAI : MonoBehaviour
 
     [Header("Stats")]
     public float detectionRange = 20f;
-    public float attackRange = 10f; // Ranged boss
+    public float attackRange = 10f; 
     public float moveSpeed = 0;
 
     [Header("Phase 2")]
     public bool isPhase2 = false;
     public float phase2SpeedMultiplier = 1.5f;
-    public Material phase2Material; // Visual change (optional)
+    public Material phase2Material; 
 
     [Header("Abilities")]
     public GameObject poisonPrefab;
-    public Transform firePoint; // Where projectiles come out
-    public float abilityCooldown = 3.0f; // Time between attacks
+    public Transform firePoint; 
+    public float abilityCooldown = 3.0f; 
 
     private NavMeshAgent _agent;
     private Transform _player;
@@ -79,7 +79,7 @@ public class BossAI : MonoBehaviour
 
         Debug.Log($"Boss State is {currentState}");
 
-        // Check Phase 2 Logic
+       
         CheckPhase();
 
 
@@ -141,7 +141,6 @@ public class BossAI : MonoBehaviour
         }
     }
 
-   // Ability 1: Poison Throw 
     void ThrowPoison()
     {
         if (poisonPrefab != null && firePoint != null)
@@ -151,8 +150,7 @@ public class BossAI : MonoBehaviour
         }
     }
 
-  // Ability 2: Revolver Blast 
-    // Immediate Hitscan damage (Hit check)
+
     void RevolverBlast()
     {
         
@@ -170,8 +168,7 @@ public class BossAI : MonoBehaviour
         }
     }
 
-    // Ability 3: Blink 
-    // Teleport behind player or random spot
+
     void Blink()
     {
         Vector3 randomPos = Random.insideUnitSphere * 5f + _player.position;

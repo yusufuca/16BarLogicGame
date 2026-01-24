@@ -48,3 +48,4 @@ MonoBehaviour:
   victoryUI: {fileID: 0}
   pauseMenuUI: {fileID: 0}
   isPaused: 0
+  isLinear: 1

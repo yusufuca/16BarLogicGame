@@ -1347,17 +1347,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72f5f423d0b1ef3489c8f4ec3bc8afae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 300
+  maxHealth: 1000
   currentHealth: 0
+  isPoisoned: 0
   isRegenerating: 0
   regenRate: 5
   currentLevel: 1
   currentXP: 0
   xpToNextLevel: 100
-  damageMultiplier: 1
+  damageMultiplier: 5
   xpValue: 500
   itemToDrop: {fileID: 2195480022752132373, guid: d8a9a2cfe9aedd84cb5d71aab19d2425, type: 3}
   healthBar: {fileID: 6263542606421585955}
+  xpbar: {fileID: 0}
   damageTextPrefab: {fileID: 4168428217786865534, guid: bcddbf6acc8e8b44bb2f87e82b07b65f, type: 3}
 --- !u!114 &6263542606421585955
 MonoBehaviour:
@@ -1372,6 +1374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 9150205416143618092}
+  hp: {fileID: 0}
 --- !u!114 &-3341848293980809106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1384,16 +1387,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d4bbb150ca60b3459934a8983817003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRange: 20
-  attackRange: 10
+  detectionRange: 30
+  attackRange: 15
   moveSpeed: 3.5
   isPhase2: 0
   phase2SpeedMultiplier: 1.5
   phase2Material: {fileID: 2100000, guid: 97528858bdd5a674fb05bd166835ad2d, type: 2}
   poisonPrefab: {fileID: 4369246118373609646, guid: ced7c762de7b667478d0384767bae963, type: 3}
   firePoint: {fileID: 2902935484363963915}
-  abilityCooldown: 3
-  patrolSpeed: 0
+  abilityCooldown: 1.5
+  patrolSpeed: 1
   chaseSpeed: 5.5
   waitTime: 2
   patrolRadius: 10

@@ -1238,7 +1238,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!136 &1731570908853573753
 CapsuleCollider:
@@ -1297,8 +1297,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9b79435deb99754c8d1c87fab866d10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  patrolSpeed: 3.5
-  chaseSpeed: 5.5
+  patrolSpeed: 2
+  chaseSpeed: 3
   detectionRadius: 10
   attackRadius: 1.5
   patrolRadius: 10
@@ -1317,6 +1317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 0
+  isPoisoned: 0
   isRegenerating: 0
   regenRate: 5
   currentLevel: 1

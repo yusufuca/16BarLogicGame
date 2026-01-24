@@ -1,10 +1,12 @@
 ﻿using FMOD.Studio;
 using FMODUnity;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine.SceneManagement;
 
 
 
@@ -36,7 +38,7 @@ public class AudioManager : MonoBehaviour
 
             AMInstance = this;
 
-            DontDestroyOnLoad(gameObject);
+        
 
         }
 
@@ -58,18 +60,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private LayerMask surface;
 
     [Header("SFX")]
-
     [SerializeField] private EventReference footstepSFX;
-
-   
-
     [SerializeField] private EventReference swordSwingSFX;
-
-  
-
     [SerializeField] private EventReference damageImpactSFX;
-
-   
     [SerializeField] public EventReference gameStateLoop;
     [SerializeField] public EventReference poisionBallBreakSFX;
     [SerializeField] public EventReference gunBlastSFX;
@@ -91,6 +84,8 @@ public class AudioManager : MonoBehaviour
     public bool isVictory = false;
     public bool setEpicState = false;
     public bool setAnxietyState = false;
+    public bool isSpawnerThere = false;
+    public bool isQueueLocked = false;
 
     public float combatCooldown = 8f;
     public float lastCombatTriggerTimer = -99f;
@@ -128,12 +123,15 @@ public class AudioManager : MonoBehaviour
 
     private float combatTimer = 0f;
 
+    private string queue;
 
-    
 
     private void Start()
 
     {
+
+        
+
         barDurationMS = (int)((60 / BPM) * 4 * 1000);
         if(GameManager.GMInstance.isLinear)
         {
@@ -163,6 +161,7 @@ public class AudioManager : MonoBehaviour
     private void Update()
 
     {
+        
         LastMovementTimer();
         if (isLinear) 
         {
@@ -202,7 +201,7 @@ public class AudioManager : MonoBehaviour
 
 
             TransitionTimer();
-            statesText.text = $"Queued State is: {currentState} Current State is: {prevStateText} Is Transitionable: {isTransitionable()}";
+            if(statesText != null) statesText.text = $"Queued State is: {queue} Current State is: {prevStateText} Is Transitionable: {isTransitionable()} Is Queue Locked = {isQueueLocked} IsSpawnerThere: {isSpawnerThere}";
 
             if (currentState == "Combat")
             {
@@ -216,24 +215,31 @@ public class AudioManager : MonoBehaviour
             {
                 combatTimer = 0f;
             }
-            timerText.text = $"Transition Timer: {Mathf.RoundToInt(lastTransitionTime)} Idle Timer: {Mathf.RoundToInt(inactiveTime)} Last Combat Timer: {Mathf.RoundToInt(combatTimer)}";
+            if(timerText != null) timerText.text = $"Transition Timer: {Mathf.RoundToInt(lastTransitionTime)} Inactive Timer: {Mathf.RoundToInt(inactiveTime)} Last Combat Timer: {Mathf.RoundToInt(combatTimer)} Is Transitoning: {isTransitioning}";
+           
+            if (!isQueueLocked)
+            {
+                queue = SetTheNextState();
+                
+            }
             if (isTransitioning) return;
             if (isTransitionable())
             {
-                queuedState = SetTheNextState();
+                queuedState = queue;
             }
-
-
             if (queuedState != currentState && !string.IsNullOrEmpty(queuedState))
 
             {
-
-
-                StartCoroutine(ApplyChangeState(queuedState));
-                currentState = queuedState;
-                
+                 StartCoroutine(ApplyChangeState(queuedState));
+                 
             }
         }
+    }
+
+    public void RegisterDebugUI(TextMeshProUGUI newStateText, TextMeshProUGUI newTimerText)
+    {
+        statesText = newStateText;
+        timerText = newTimerText;
     }
 
     public string SetTheNextState()
@@ -243,7 +249,7 @@ public class AudioManager : MonoBehaviour
         if (isVictory) return "Win";
         if (setEpicState) return "Epic";
         if (setAnxietyState) return "Anxiety";
-        if (isCombatActive()) return "Combat";
+        if (isCombatActive() || isSpawnerThere) return "Combat";
         if (currentMagnitude > 0.1f) return "Explore";
         if (CanChangeToIdle())  return "Idle";
         return queuedState;
@@ -308,12 +314,7 @@ public class AudioManager : MonoBehaviour
     public IEnumerator ApplyChangeState(string targetState)
 
     {
-        lastTransitionTime = 0f;
-        isTransitioning = true;
-       
-       
-
-            int timeLinePos;
+        int timeLinePos;
         loopInstance.getTimelinePosition(out timeLinePos);
         int currentPosInBar = timeLinePos % (barDurationMS*8);
         float timeToNextBar = ((barDurationMS*8) - currentPosInBar) / 1000f;
@@ -322,22 +323,31 @@ public class AudioManager : MonoBehaviour
         {
             yield return new WaitForSeconds(timeToNextBar - 0.05f);
         }
-
-        loopInstance.setParameterByNameWithLabel("States", targetState);
-        currentStateText = targetState;
-
-
-        Debug.Log("Transition " + targetState);
-
-       
         
+        if (queue != currentState)
+        {
+          
+            loopInstance.setParameterByNameWithLabel("States", targetState);
+            isQueueLocked = true;
+            isTransitioning = true;
+            currentStateText = targetState;
 
-        yield return new WaitForSeconds(1);
-        loopInstance.setParameterByNameWithLabel("prevState", targetState);
-        prevStateText = targetState;
-        Debug.Log("Current State set to " + targetState);
-        isTransitioning = false;
 
+            Debug.Log("Transition " + targetState);
+
+
+
+
+            yield return new WaitForSeconds(1);
+            loopInstance.setParameterByNameWithLabel("prevState", targetState);
+            prevStateText = targetState;
+            Debug.Log("Current State set to " + targetState);
+            isTransitioning = false;
+            isQueueLocked = false;
+            lastTransitionTime = 0f;
+            currentState = queuedState;
+        }
+        
     }
 
     public IEnumerator ApplyChangeStateLinear(string targetState)
