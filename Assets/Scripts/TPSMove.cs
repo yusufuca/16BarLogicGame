@@ -92,7 +92,7 @@ public class TPSMovement : MonoBehaviour
             _controller.Move(_velocity * Time.deltaTime);
         }
 
-        // 4. Animation
+      
         float currentInputMagnitude = inputDir.magnitude;
         AudioManager.AMInstance.currentMagnitude = currentInputMagnitude;
         _animator.SetFloat("Speed", currentInputMagnitude, 0.1f, Time.deltaTime);

@@ -57,10 +57,8 @@ public class EnemyAI : MonoBehaviour
     {
         if (_player == null) return;
 
-        // 1. Calculate Distance
         float distanceToPlayer = Vector3.Distance(transform.position, _player.position);
 
-        // 2. State Switching Logic
         if (distanceToPlayer <= attackRadius)
         {
             _currentState = State.Attack;
@@ -74,7 +72,7 @@ public class EnemyAI : MonoBehaviour
             _currentState = State.Patrol;
         }
 
-        // 3. Execute State Behavior
+
         switch (_currentState)
         {
             case State.Patrol:
@@ -93,10 +91,6 @@ public class EnemyAI : MonoBehaviour
             AudioManager.AMInstance.CombatTimer();
         }
 
-
-        // 4. Update Animator Locomotion
-        // Pass the Agent's velocity to the Blend Tree (assuming you reused the Player's controller)
-        // If not, remove this line or adapt to your specific NPC animator.
         float speed = _agent.velocity.magnitude / chaseSpeed;
         _animator.SetFloat("Speed", speed, 0.1f, Time.deltaTime);
     }
