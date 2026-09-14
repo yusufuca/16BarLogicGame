@@ -1,4 +1,4 @@
- 16BarLogicGame — Interactive Music System (FSM + FMOD)
+# 16BarLogicGame — Interactive Music System (FSM + FMOD)
 
 An event-driven, quantized adaptive music system built in **Unity (C#)** with **FMOD Studio**. Game state changes (idle, explore, combat, anxiety, epic, win, die) drive music transitions that always land on the bar, not the moment the trigger fires.
 
