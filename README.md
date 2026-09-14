@@ -1,8 +1,8 @@
-# 16BarLogicGame — Interactive Music System (FSM + FMOD)
+ 16BarLogicGame — Interactive Music System (FSM + FMOD)
 
 An event-driven, quantized adaptive music system built in **Unity (C#)** with **FMOD Studio**. Game state changes (idle, explore, combat, anxiety, epic, win, die) drive music transitions that always land on the bar, not the moment the trigger fires.
 
-## Core systems
+Core systems
 
 - **Finite state machine** — seven music states (`Idle`, `Explore`, `Combat`, `Anxiety`, `Epic`, `Win`, `Die`), each with a dedicated FMOD transition loop for musical continuity between states.
 
@@ -12,10 +12,10 @@ An event-driven, quantized adaptive music system built in **Unity (C#)** with **
 
 - **Priority locking** — higher-intensity states (Anxiety) can override and lock out lower-tier state changes until they resolve, so a queued Explore/Combat transition can't interrupt a state that needs to finish first.
 
-## Stack
+Stack
 
 Unity 2022.3, C#, FMOD Studio.
 
-## Development notes
+Development notes
 
 The state machine design, the quantization approach, and the timer/priority logic are my own. Implementation was done iteratively with AI pair-programming, particularly for the UI, combat, and spawner scaffolding used to test the system in a playable scene. I can walk through and explain any part of this repository on request.
